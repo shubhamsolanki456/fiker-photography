@@ -1430,6 +1430,7 @@ nav {
   }
 
   .nav__links {
+    display: flex;
     padding: 0;
     width: 100%;
     position: static;
