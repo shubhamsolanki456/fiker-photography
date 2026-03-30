@@ -1456,6 +1456,17 @@ nav {
     flex-direction: column;
   }
 
+  .header {
+    min-height: 60vh;
+    background-position: center center;
+    background-size: cover;
+  }
+
+  .page__hero {
+    min-height: 40vh;
+    background-position: center center;
+  }
+
   .hero__title {
     font-size: 2rem;
   }
