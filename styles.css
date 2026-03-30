@@ -161,6 +161,11 @@ body {
 
 body {
   font-family: "Montserrat", sans-serif;
+  overflow: hidden;
+}
+
+body.loaded {
+  overflow: auto;
 }
 
 /* ==================== HEADER / HERO ==================== */

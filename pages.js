@@ -2,7 +2,10 @@
 window.addEventListener('load', () => {
   const preloader = document.getElementById('preloader');
   if (preloader) {
-    setTimeout(() => preloader.classList.add('loaded'), 400);
+    setTimeout(() => {
+      preloader.classList.add('loaded');
+      document.body.classList.add('loaded');
+    }, 400);
   }
 });
 
