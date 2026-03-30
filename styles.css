@@ -259,7 +259,8 @@ nav {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background-color: var(--text-dark);
+  background-color: transparent;
+  transition: background-color 0.4s ease;
 }
 
 .nav__logo img {
@@ -320,6 +321,11 @@ nav {
 .nav__links li a.active {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* ==================== SCROLLED NAV STATE ==================== */
+nav.nav--scrolled .nav__header {
+  background-color: var(--text-dark);
 }
 
 /* ==================== ABOUT ==================== */
@@ -1297,6 +1303,74 @@ nav {
   transform: translateY(-3px);
 }
 
+/* ==================== PRELOADER ==================== */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--text-dark);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: preloaderPulse 1.8s ease-in-out infinite;
+}
+
+.preloader__brand .brand__name {
+  font-size: 2.5rem;
+  letter-spacing: 12px;
+}
+
+.preloader__brand .brand__sub {
+  font-size: 0.7rem;
+  letter-spacing: 10px;
+}
+
+.preloader__bar {
+  margin-top: 2rem;
+  width: 120px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.preloader__bar::after {
+  content: "";
+  display: block;
+  width: 40%;
+  height: 100%;
+  background-color: var(--accent);
+  border-radius: 2px;
+  animation: preloaderSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes preloaderPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes preloaderSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (width > 540px) {
   .portfolio__grid {
@@ -1457,21 +1531,9 @@ nav {
   }
 
   .header {
-    min-height: auto !important;
-    padding-bottom: 3rem;
-    background-position: top center !important;
-    background-size: 100% auto !important;
-    background-repeat: no-repeat !important;
-    background-color: var(--text-dark) !important;
-  }
-
-  .page__hero {
-    min-height: auto !important;
-    padding-bottom: 3rem;
-    background-position: top center !important;
-    background-size: 100% auto !important;
-    background-repeat: no-repeat !important;
-    background-color: var(--text-dark) !important;
+    min-height: 70vh !important;
+    background-size: cover !important;
+    background-position: center center !important;
   }
 
   .hero__title {

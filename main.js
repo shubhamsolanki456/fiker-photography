@@ -1,3 +1,16 @@
+// ==================== PRELOADER ====================
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    setTimeout(() => preloader.classList.add('loaded'), 400);
+  }
+});
+
+// ==================== LAZY LOAD IMAGES ====================
+document.querySelectorAll('img:not([loading])').forEach(img => {
+  img.setAttribute('loading', 'lazy');
+});
+
 // ==================== MOBILE MENU ====================
 const menuBtn = document.getElementById("menu-btn");
 const navLinks = document.getElementById("nav-links");
@@ -412,5 +425,19 @@ window.addEventListener("scroll", () => {
     }
   }
 });
+
+// ==================== TRANSPARENT NAV ON SCROLL ====================
+const navElement = document.querySelector('nav');
+if (navElement) {
+  function updateNavScroll() {
+    if (window.scrollY > 50) {
+      navElement.classList.add('nav--scrolled');
+    } else {
+      navElement.classList.remove('nav--scrolled');
+    }
+  }
+  window.addEventListener('scroll', updateNavScroll);
+  updateNavScroll();
+}
 
 console.log("✨ Fiker Photography website fully loaded and functional!");
