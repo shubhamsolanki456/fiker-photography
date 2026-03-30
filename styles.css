@@ -1457,14 +1457,21 @@ nav {
   }
 
   .header {
-    min-height: 60vh;
-    background-position: center center;
-    background-size: cover;
+    min-height: auto !important;
+    padding-bottom: 3rem;
+    background-position: top center !important;
+    background-size: 100% auto !important;
+    background-repeat: no-repeat !important;
+    background-color: var(--text-dark) !important;
   }
 
   .page__hero {
-    min-height: 40vh;
-    background-position: center center;
+    min-height: auto !important;
+    padding-bottom: 3rem;
+    background-position: top center !important;
+    background-size: 100% auto !important;
+    background-repeat: no-repeat !important;
+    background-color: var(--text-dark) !important;
   }
 
   .hero__title {
