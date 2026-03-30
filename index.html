@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Fiker Photography - Professional photography services for portraits, weddings, family sessions, and more. We capture the moments that matter most." />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Fiker Photography | Professional Photography Services</title>
+</head>
+
+<body>
+  <header class="header" id="home">
+    <nav>
+      <div class="nav__header">
+        <div class="nav__logo">
+          <a href="#home" class="nav__brand" onclick="window.location.reload(); return false;">
+            <span class="brand__name">FIKER</span>
+            <span class="brand__sub">PHOTOGRAPHY</span>
+          </a>
+        </div>
+        <div class="nav__menu__btn" id="menu-btn">
+          <i class="ri-menu-line"></i>
+        </div>
+      </div>
+      <ul class="nav__links" id="nav-links">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="about.html">ABOUT US</a></li>
+        <li><a href="portfolio.html">PORTFOLIO</a></li>
+        <li class="nav__logo">
+          <a href="#home" class="nav__brand" onclick="window.location.reload(); return false;">
+            <span class="brand__name">FIKER</span>
+            <span class="brand__sub">PHOTOGRAPHY</span>
+          </a>
+        </li>
+        <li><a href="blog.html">BLOG</a></li>
+        <li><a href="booking.html">BOOK NOW</a></li>
+        <li><a href="#contact">CONTACT US</a></li>
+      </ul>
+    </nav>
+    <!-- Hero Content -->
+    <div class="hero__content">
+      <h1 class="hero__title">Capturing Life's<br />Beautiful Moments</h1>
+      <p class="hero__subtitle">Fiker Photography &mdash; Professional visual storytelling</p>
+      <a href="booking.html" class="btn hero__btn">Book a Session</a>
+    </div>
+  </header>
+
+  <div class="section__container about__container" id="about">
+    <h2 class="section__header">WE CAPTURE THE MOMENTS</h2>
+    <p class="section__description">
+      At Fiker Photography, we specialize in freezing those fleeting moments in time
+      that hold immense significance for you. With our passion for photography
+      and keen eye for detail, we transform ordinary moments into
+      extraordinary memories.
+    </p>
+    <p class="section__description">
+      Whether it's a milestone event, a candid portrait, or the breathtaking
+      beauty of nature, we strive to encapsulate the essence of every moment,
+      ensuring that your cherished memories last a lifetime. Trust us to
+      capture the magic of your life's journey, one frame at a time.
+    </p>
+    <div class="about__brand">
+      <span class="brand__name brand__name--dark">FIKER</span>
+      <span class="brand__sub brand__sub--dark">PHOTOGRAPHY</span>
+    </div>
+  </div>
+
+  <div class="section__container portfolio__container" id="portfolio">
+    <h2 class="section__header">~ PORTFOLIO ~</h2>
+    <div class="portfolio__grid">
+      <div class="portfolio__card" data-category="portraits">
+        <img src="assets/portfolio-1.jpg" alt="Portrait Photography Portfolio" />
+        <div class="portfolio__content">
+          <a href="portfolio.html" class="btn portfolio__view__btn">VIEW PORTFOLIO</a>
+        </div>
+      </div>
+      <div class="portfolio__card" data-category="weddings">
+        <img src="assets/portfolio-2.jpg" alt="Wedding Photography Portfolio" />
+        <div class="portfolio__content">
+          <a href="portfolio.html" class="btn portfolio__view__btn">VIEW PORTFOLIO</a>
+        </div>
+      </div>
+      <div class="portfolio__card" data-category="fashions">
+        <img src="assets/portfolio-3.jpg" alt="Fashion Photography Portfolio" />
+        <div class="portfolio__content">
+          <a href="portfolio.html" class="btn portfolio__view__btn">VIEW PORTFOLIO</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="service" id="service">
+    <div class="section__container service__container">
+      <h2 class="section__header">~ SERVICES ~</h2>
+      <p class="section__description">
+        At Fiker Photography, we offer a range of professional photography services
+        tailored to meet your unique needs. With a commitment to excellence
+        and creativity, we strive to exceed your expectations, delivering
+        captivating visuals that tell your story with authenticity and
+        passion.
+      </p>
+      <div class="service__grid">
+        <div class="service__card" id="service-portraits">
+          <h4>Portrait Sessions</h4>
+          <p>
+            Our portrait sessions are designed to showcase your personality
+            and style in stunning imagery.
+          </p>
+          <a href="booking.html" class="btn service__btn">Book Now</a>
+        </div>
+        <div class="service__card" id="service-maternity">
+          <h4>Maternity Sessions</h4>
+          <p>
+            Embrace the beauty and miracle of new life with our maternity and
+            newborn photography sessions.
+          </p>
+          <a href="booking.html" class="btn service__btn">Book Now</a>
+        </div>
+        <div class="service__card" id="service-family">
+          <h4>Family Sessions</h4>
+          <p>
+            Cherish the bond of family with our custom-designed playful candid
+            moments and portrait sessions.
+          </p>
+          <a href="booking.html" class="btn service__btn">Book Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section__container client__container" id="client">
+    <h2 class="section__header">~ TESTIMONIALS ~</h2>
+    <!-- Slider main container -->
+    <div class="swiper">
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+        <!-- Slides -->
+        <div class="swiper-slide">
+          <div class="client__card">
+            <img src="assets/client-1.jpg" alt="Sarah and Michael - Happy Clients" />
+            <div class="client__stars">
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+            </div>
+            <p>
+              Fiker Photography exceeded all our expectations! Their attention to
+              detail and ability to capture the essence of our special day was
+              truly remarkable. Every time we look at our wedding photos,
+              we're transported back to those magical moments. Thank you for
+              preserving our memories so beautifully!
+            </p>
+            <h4>Sarah and Michael</h4>
+            <span class="client__role">Wedding Photography</span>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="client__card">
+            <img src="assets/client-2.jpg" alt="The Johnson Family - Happy Clients" />
+            <div class="client__stars">
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+            </div>
+            <p>
+              We couldn't be happier with our family portrait session with
+              Fiker Photography. They made us feel relaxed and comfortable throughout
+              the entire shoot, resulting in natural and candid photos that
+              perfectly reflect our family dynamic. These images will be
+              cherished for years to come!
+            </p>
+            <h4>The Johnson Family</h4>
+            <span class="client__role">Family Session</span>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="client__card">
+            <img src="assets/client-3.jpg" alt="Emily and David - Happy Clients" />
+            <div class="client__stars">
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-fill"></i>
+              <i class="ri-star-half-fill"></i>
+            </div>
+            <p>
+              Fiker Photography's maternity and newborn sessions captured the most
+              precious moments of our lives with such tenderness and care.
+              From the anticipation of pregnancy to the joy of welcoming our
+              little one, every photo tells a story that we'll cherish
+              forever. Thank you for creating beautiful memories for our
+              family!
+            </p>
+            <h4>Emily and David</h4>
+            <span class="client__role">Maternity Session</span>
+          </div>
+        </div>
+      </div>
+      <!-- If we need pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <section class="section__container gallery__container" id="gallery">
+    <h2 class="section__header">~ GALLERY ~</h2>
+    <div class="gallery__grid">
+      <img src="assets/image-1.jpg" alt="Gallery Photo 1" class="gallery__img" />
+      <img src="assets/image-2.jpg" alt="Gallery Photo 2" class="gallery__img" />
+      <img src="assets/image-3.jpg" alt="Gallery Photo 3" class="gallery__img" />
+      <img src="assets/image-4.jpg" alt="Gallery Photo 4" class="gallery__img" />
+      <img src="assets/image-5.jpg" alt="Gallery Photo 5" class="gallery__img" />
+      <img src="assets/image-6.jpg" alt="Gallery Photo 6" class="gallery__img" />
+      <img src="assets/image-7.jpg" alt="Gallery Photo 7" class="gallery__img" />
+      <img src="assets/image-8.jpg" alt="Gallery Photo 8" class="gallery__img" />
+    </div>
+    <div class="gallery__btn">
+      <button class="btn" id="load-more-gallery">VIEW GALLERY</button>
+    </div>
+  </section>
+
+  <section class="blog" id="blog">
+    <div class="section__container blog__container">
+      <div class="blog__content">
+        <h2 class="section__header">~ LATEST BLOG ~</h2>
+        <h4>Capturing Emotion in Every Frame</h4>
+        <p>
+          This blog post delves into the importance of storytelling in
+          photography and how Fiker Photography approaches capturing emotion and
+          narrative in their work. Readers will discover the techniques and
+          strategies used by professional photographers to evoke emotion,
+          convey meaning, and create compelling visual narratives that
+          resonate with viewers on a deep level.
+        </p>
+        <div class="blog__btn">
+          <a href="blog.html" class="btn" id="read-more-blog">Read More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section__container instagram__container">
+    <h2 class="section__header">~ FOLLOW <span class="highlight">FIKER</span> ON INSTAGRAM ~</h2>
+    <div class="instagram__flex">
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-1.jpg" alt="Instagram Photo 1" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-2.jpg" alt="Instagram Photo 2" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-3.jpg" alt="Instagram Photo 3" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-4.jpg" alt="Instagram Photo 4" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-5.jpg" alt="Instagram Photo 5" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-6.jpg" alt="Instagram Photo 6" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-7.jpg" alt="Instagram Photo 7" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+      <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="instagram__link"><img
+          src="assets/image-8.jpg" alt="Instagram Photo 8" />
+        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>
+      </a>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="section__container footer__container">
+      <div class="footer__col">
+        <div class="footer__brand">
+          <span class="brand__name brand__name--dark">FIKER</span>
+          <span class="brand__sub brand__sub--dark">PHOTOGRAPHY</span>
+        </div>
+        <div class="footer__socials">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i
+              class="ri-facebook-fill"></i></a>
+          <a href="https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i
+              class="ri-instagram-line"></i></a>
+
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i
+              class="ri-youtube-fill"></i></a>
+
+        </div>
+      </div>
+      <div class="footer__col">
+        <ul class="footer__links">
+          <li><a href="index.html">HOME</a></li>
+          <li><a href="about.html">ABOUT US</a></li>
+          <li><a href="portfolio.html">PORTFOLIO</a></li>
+          <li><a href="blog.html">BLOG</a></li>
+          <li><a href="booking.html">BOOK NOW</a></li>
+          <li><a href="#contact">CONTACT US</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>STAY IN TOUCH</h4>
+        <p>
+          Keep up-to-date with all things Fiker Photography! Join our community and
+          never miss a moment!
+        </p>
+      </div>
+    </div>
+
+    <!-- Contact Form Section -->
+    <div class="section__container contact__section">
+      <h2 class="section__header">~ GET IN TOUCH ~</h2>
+      <div class="contact__grid">
+        <div class="contact__info">
+          <div class="contact__info__card">
+            <i class="ri-map-pin-2-fill"></i>
+            <div>
+              <h4>Our Studio</h4>
+              <p>Decided as per Appointment</p>
+            </div>
+          </div>
+          <div class="contact__info__card">
+            <i class="ri-phone-fill"></i>
+            <div>
+              <h4>Phone</h4>
+              <p><a href="tel:+12136104929">+1 (213) 610-4929</a></p>
+            </div>
+          </div>
+          <div class="contact__info__card">
+            <i class="ri-mail-fill"></i>
+            <div>
+              <h4>Email</h4>
+              <p><a href="mailto:fikerphotography16@gmail.com">fikerphotography16@gmail.com</a></p>
+
+            </div>
+          </div>
+          <div class="contact__info__card">
+            <i class="ri-time-fill"></i>
+            <div>
+              <h4>Working Hours</h4>
+              <p>Mon - Fri: 9:00 AM - 6:00 PM<br />Sat: 10:00 AM - 4:00 PM</p>
+            </div>
+          </div>
+        </div>
+        <form class="contact__form" id="contact-form">
+          <div class="form__group">
+            <input type="text" id="contact-name" placeholder="Your Name" required />
+          </div>
+          <div class="form__group">
+            <input type="email" id="contact-email" placeholder="Your Email" required />
+          </div>
+          <div class="form__group">
+            <input type="tel" id="contact-phone" placeholder="Your Phone Number" />
+          </div>
+          <div class="form__group">
+            <select id="contact-service" required>
+              <option value="" disabled selected>Select a Service</option>
+              <option value="portrait">Portrait Session</option>
+              <option value="wedding">Wedding Photography</option>
+              <option value="maternity">Maternity Session</option>
+              <option value="family">Family Session</option>
+              <option value="fashion">Fashion Photography</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form__group">
+            <select id="contact-package">
+              <option value="custom" selected>Custom Quote</option>
+            </select>
+          </div>
+          <div class="form__group full__width">
+            <textarea id="contact-message" placeholder="Tell us about your vision..." rows="5" required></textarea>
+          </div>
+          <div class="form__group full__width">
+            <button type="submit" class="btn contact__submit__btn">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer__bar">
+      Copyright &copy; 2026 Fiker Photography. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox__content">
+      <button class="lightbox__close" id="lightbox-close" aria-label="Close lightbox"><i
+          class="ri-close-line"></i></button>
+      <button class="lightbox__nav lightbox__prev" id="lightbox-prev" aria-label="Previous image"><i
+          class="ri-arrow-left-s-line"></i></button>
+      <img src="" alt="Lightbox Image" id="lightbox-img" />
+      <button class="lightbox__nav lightbox__next" id="lightbox-next" aria-label="Next image"><i
+          class="ri-arrow-right-s-line"></i></button>
+      <div class="lightbox__counter" id="lightbox-counter"></div>
+      <h3 class="lightbox__title" id="lightbox-title"></h3>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <div class="toast__content">
+      <i class="ri-check-double-line"></i>
+      <span id="toast-message">Message sent successfully!</span>
+    </div>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button class="back__to__top" id="back-to-top" aria-label="Back to top">
+    <i class="ri-arrow-up-line"></i>
+  </button>
+
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="main.js"></script>
+</body>
+
+</html>
