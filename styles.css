@@ -244,7 +244,7 @@ body {
 
 /* ==================== NAV ==================== */
 nav {
-  position: fixed;
+  position: absolute;
   isolation: isolate;
   top: 0;
   width: 100%;
@@ -257,9 +257,13 @@ nav {
   padding: 1rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
-  background-color: var(--text-dark);
+  background-color: transparent;
+}
+
+.nav__header .nav__logo {
+  display: none;
 }
 
 .nav__logo img {
