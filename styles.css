@@ -259,8 +259,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background-color: transparent;
-  transition: background-color 0.4s ease;
+  background-color: var(--text-dark);
 }
 
 .nav__logo img {
@@ -321,11 +320,6 @@ nav {
 .nav__links li a.active {
   border-color: var(--accent);
   color: var(--accent);
-}
-
-/* ==================== SCROLLED NAV STATE ==================== */
-nav.nav--scrolled .nav__header {
-  background-color: var(--text-dark);
 }
 
 /* ==================== ABOUT ==================== */

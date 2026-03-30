@@ -296,18 +296,5 @@ blogReadBtns.forEach((btn) => {
   });
 });
 
-// ==================== TRANSPARENT NAV ON SCROLL ====================
-const navElement = document.querySelector('nav');
-if (navElement) {
-  function updateNavScroll() {
-    if (window.scrollY > 50) {
-      navElement.classList.add('nav--scrolled');
-    } else {
-      navElement.classList.remove('nav--scrolled');
-    }
-  }
-  window.addEventListener('scroll', updateNavScroll);
-  updateNavScroll();
-}
-
 console.log("✨ Fiker Photography page loaded!");
+
