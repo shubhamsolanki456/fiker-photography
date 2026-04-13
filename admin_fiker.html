@@ -395,6 +395,7 @@
         <h2>FIKER <span>Admin Panel</span></h2>
       </div>
       <div class="topbar-actions">
+        <button class="topbar-btn" onclick="syncFromGitHub(false)" title="Sync images from GitHub"><i class="ri-refresh-line"></i> Sync</button>
         <a href="index.html" class="topbar-btn" target="_blank"><i class="ri-external-link-line"></i> View Site</a>
         <button class="topbar-btn danger" onclick="logout()"><i class="ri-logout-box-r-line"></i> Logout</button>
       </div>
@@ -709,29 +710,106 @@
     let replaceFileData = null; // holds {name, base64} for replacement uploads
 
     // ======================================================================
-    // INIT
+    // INIT — Syncs from GitHub on every load to stay in sync with live site
     // ======================================================================
-    function init() {
-      loadData(); renderGallery(); renderPortfolio(); updateStats(); updateCounts(); loadGitHubConfig(); checkGithubDashboard();
+    async function init() {
+      loadDataLocal(); // load localStorage as initial fallback
+      renderGallery(); renderPortfolio(); updateStats(); updateCounts();
+      loadGitHubConfig(); checkGithubDashboard();
+      // Auto-sync from GitHub if configured
+      await syncFromGitHub(true); // silent=true, no toast on success
     }
-    function loadData() {
+
+    function loadDataLocal() {
       const sg = localStorage.getItem('fiker_gallery'), sp = localStorage.getItem('fiker_portfolio');
       galleryImages = sg ? JSON.parse(sg) : [...DEFAULT_GALLERY];
       portfolioItems = sp ? JSON.parse(sp) : [...DEFAULT_PORTFOLIO];
-      // Migrate old .webp/.webp/.webp paths to .webp
+      // Migrate old .jpg/.png paths to .webp
       let migrated = false;
       const migrateExt = (s) => s ? s.replace(/\.(jpg|jpeg|png)/gi, '.webp') : s;
       galleryImages.forEach(img => {
         const newSrc = migrateExt(img.src);
         if (newSrc !== img.src) { img.src = newSrc; migrated = true; }
-        if (img.alt) img.alt = migrateExt(img.alt);
       });
       portfolioItems.forEach(item => {
         const newSrc = migrateExt(item.src);
         if (newSrc !== item.src) { item.src = newSrc; migrated = true; }
-        if (item.alt) item.alt = migrateExt(item.alt);
       });
-      if (migrated) { saveData(); console.log('Migrated image paths from .webp/.webp to .webp'); }
+      if (migrated) saveData();
+    }
+
+    // Parse gallery images from raw HTML between markers
+    function parseGalleryFromHTML(html) {
+      const items = [];
+      const imgRegex = /<img\s+src="([^"]+)"\s+alt="([^"]*)"\s+class="gallery__img"/g;
+      let m;
+      while ((m = imgRegex.exec(html)) !== null) {
+        items.push({ src: m[1], alt: m[2] });
+      }
+      return items;
+    }
+
+    // Parse portfolio items from raw HTML between markers
+    function parsePortfolioFromHTML(html) {
+      const items = [];
+      const itemRegex = /<div\s+class="portfolio__item"\s+data-category="([^"]+)">\s*<img\s+src="([^"]+)"\s+alt="([^"]*)"[\s/]*>[\s\S]*?<h4>([^<]*)<\/h4>\s*<p>([^<]*)<\/p>/g;
+      let m;
+      while ((m = itemRegex.exec(html)) !== null) {
+        items.push({ category: m[1], src: m[2], alt: m[3], title: m[4], subtitle: m[5] });
+      }
+      return items;
+    }
+
+    // Sync from GitHub — fetches the REAL HTML from the repo and parses images from it
+    async function syncFromGitHub(silent = false) {
+      const cfg = getGitHubConfig();
+      if (!cfg) {
+        if (!silent) showAdminToast('GitHub not configured. Using local data.', 'warning');
+        return;
+      }
+      try {
+        if (!silent) showAdminToast('Syncing from GitHub...', 'info');
+
+        // Fetch index.html
+        const idxFile = await ghGet('index.html');
+        const idxContent = decodeURIComponent(escape(atob(idxFile.content.replace(/\n/g, ''))));
+
+        // Parse gallery from markers
+        const galStart = idxContent.indexOf('<!-- ADMIN:GALLERY_START -->');
+        const galEnd = idxContent.indexOf('<!-- ADMIN:GALLERY_END -->');
+        if (galStart !== -1 && galEnd !== -1) {
+          const galHTML = idxContent.substring(galStart, galEnd + '<!-- ADMIN:GALLERY_END -->'.length);
+          const parsed = parseGalleryFromHTML(galHTML);
+          if (parsed.length > 0) {
+            galleryImages = parsed;
+          }
+        }
+
+        // Fetch portfolio.html
+        const pfFile = await ghGet('portfolio.html');
+        const pfContent = decodeURIComponent(escape(atob(pfFile.content.replace(/\n/g, ''))));
+
+        // Parse portfolio from markers
+        const pfStart = pfContent.indexOf('<!-- ADMIN:PORTFOLIO_START -->');
+        const pfEnd = pfContent.indexOf('<!-- ADMIN:PORTFOLIO_END -->');
+        if (pfStart !== -1 && pfEnd !== -1) {
+          const pfHTML = pfContent.substring(pfStart, pfEnd + '<!-- ADMIN:PORTFOLIO_END -->'.length);
+          const parsed = parsePortfolioFromHTML(pfHTML);
+          if (parsed.length > 0) {
+            portfolioItems = parsed;
+          }
+        }
+
+        // Save synced data to localStorage
+        saveData();
+        renderGallery(); renderPortfolio(); updateStats(); updateCounts();
+
+        if (!silent) showAdminToast(`Synced! ${galleryImages.length} gallery + ${portfolioItems.length} portfolio items`, 'success');
+        console.log(`GitHub sync complete: ${galleryImages.length} gallery, ${portfolioItems.length} portfolio`);
+      } catch (e) {
+        console.warn('GitHub sync failed, using local data:', e.message);
+        if (!silent) showAdminToast('Sync failed: ' + e.message, 'error');
+      }
     }
     function saveData() {
       localStorage.setItem('fiker_gallery', JSON.stringify(galleryImages));
