@@ -173,7 +173,7 @@ body.loaded {
   position: relative;
   min-height: 600px;
   background-image: radial-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.9)),
-    url("assets/header.jpg");
+    url("assets/header.webp");
   background-position: center top;
   background-size: cover;
   background-repeat: no-repeat;
@@ -421,7 +421,7 @@ nav {
 /* ==================== SERVICES ==================== */
 .service {
   background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
-    url("assets/book.jpg");
+    url("assets/book.webp");
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -609,7 +609,7 @@ nav {
 /* ==================== BLOG ==================== */
 .blog {
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url("assets/blog.jpg");
+    url("assets/blog.webp");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;

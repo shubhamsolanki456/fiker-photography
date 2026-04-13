@@ -226,9 +226,9 @@ const galleryGrid = document.querySelector(".gallery__grid");
 let galleryExpanded = false;
 
 const additionalGalleryImages = [
-  { src: "assets/portfolio-1.jpg", alt: "Gallery Photo 9" },
-  { src: "assets/portfolio-2.jpg", alt: "Gallery Photo 10" },
-  { src: "assets/portfolio-3.jpg", alt: "Gallery Photo 11" },
+  { src: "assets/portfolio-1.webp", alt: "Gallery Photo 9" },
+  { src: "assets/portfolio-2.webp", alt: "Gallery Photo 10" },
+  { src: "assets/portfolio-3.webp", alt: "Gallery Photo 11" },
 ];
 
 if (loadMoreBtn) {

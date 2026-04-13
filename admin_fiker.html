@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Panel | Fiker Photography</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --admin-bg: #0a0a0f;
+      --admin-surface: #12121a;
+      --admin-surface-2: #1a1a26;
+      --admin-surface-3: #22222e;
+      --admin-border: #2a2a3a;
+      --admin-border-hover: #3a3a4e;
+      --admin-text: #e8e8f0;
+      --admin-text-muted: #8888a0;
+      --admin-text-dim: #5a5a72;
+      --admin-accent: #c8a97e;
+      --admin-accent-glow: rgba(200, 169, 126, 0.15);
+      --admin-accent-dark: #a88a5e;
+      --admin-success: #34d399;
+      --admin-success-bg: rgba(52, 211, 153, 0.1);
+      --admin-danger: #f87171;
+      --admin-danger-bg: rgba(248, 113, 113, 0.1);
+      --admin-warning: #fbbf24;
+      --admin-warning-bg: rgba(251, 191, 36, 0.1);
+      --admin-info: #60a5fa;
+      --admin-info-bg: rgba(96, 165, 250, 0.1);
+      --admin-radius: 12px;
+      --admin-radius-sm: 8px;
+      --admin-radius-lg: 16px;
+      --admin-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --admin-shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.6);
+      --admin-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--admin-bg);
+      color: var(--admin-text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ==================== LOGIN ==================== */
+    .login-screen {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: var(--admin-bg); z-index: 10000; transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .login-screen.hidden { opacity: 0; transform: scale(1.05); pointer-events: none; }
+    .login-card {
+      width: 100%; max-width: 420px; padding: 3rem 2.5rem;
+      background: var(--admin-surface); border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-lg); box-shadow: var(--admin-shadow-lg); text-align: center;
+    }
+    .login-card .login-icon {
+      width: 64px; height: 64px; margin: 0 auto 1.5rem; background: var(--admin-accent-glow);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .login-card .login-icon i { font-size: 1.8rem; color: var(--admin-accent); }
+    .login-card h1 {
+      font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--admin-accent), #e8d5b8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .login-card p { color: var(--admin-text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .login-input-group { position: relative; margin-bottom: 1.5rem; }
+    .login-input-group input {
+      width: 100%; padding: 0.9rem 1.2rem 0.9rem 3rem; background: var(--admin-surface-2);
+      border: 1px solid var(--admin-border); border-radius: var(--admin-radius); color: var(--admin-text);
+      font-size: 1rem; font-family: inherit; outline: none; transition: var(--admin-transition);
+    }
+    .login-input-group input:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 3px var(--admin-accent-glow); }
+    .login-input-group i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--admin-text-dim); font-size: 1.1rem; }
+    .login-btn {
+      width: 100%; padding: 0.9rem; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-dark));
+      border: none; border-radius: var(--admin-radius); color: #fff; font-size: 1rem; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: var(--admin-transition); letter-spacing: 0.5px;
+    }
+    .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(200, 169, 126, 0.3); }
+    .login-error { color: var(--admin-danger); font-size: 0.85rem; margin-top: 1rem; opacity: 0; transition: opacity 0.3s ease; }
+    .login-error.visible { opacity: 1; }
+
+    /* ==================== LAYOUT ==================== */
+    .admin-wrapper { display: none; min-height: 100vh; }
+    .admin-wrapper.active { display: block; }
+
+    .admin-topbar {
+      position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between;
+      padding: 0.8rem 2rem; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid var(--admin-border);
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-brand .brand-dot {
+      width: 10px; height: 10px; background: var(--admin-accent); border-radius: 50%;
+      box-shadow: 0 0 12px var(--admin-accent); animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .topbar-brand h2 { font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
+    .topbar-brand span { font-weight: 400; color: var(--admin-text-muted); }
+    .topbar-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-btn {
+      padding: 0.5rem 1rem; background: var(--admin-surface-2); border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm); color: var(--admin-text-muted); font-size: 0.85rem;
+      font-family: inherit; cursor: pointer; transition: var(--admin-transition); display: flex; align-items: center; gap: 0.4rem; text-decoration:none;
+    }
+    .topbar-btn:hover { border-color: var(--admin-border-hover); color: var(--admin-text); background: var(--admin-surface-3); }
+    .topbar-btn.danger:hover { border-color: var(--admin-danger); color: var(--admin-danger); background: var(--admin-danger-bg); }
+
+    /* ==================== TABS ==================== */
+    .admin-tabs {
+      display: flex; align-items: center; gap: 0.25rem; padding: 0.8rem 2rem;
+      background: var(--admin-surface); border-bottom: 1px solid var(--admin-border); overflow-x: auto;
+    }
+    .admin-tab {
+      padding: 0.6rem 1.25rem; background: transparent; border: none; border-radius: var(--admin-radius-sm);
+      color: var(--admin-text-muted); font-size: 0.85rem; font-weight: 500; font-family: inherit; cursor: pointer;
+      transition: var(--admin-transition); white-space: nowrap; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .admin-tab:hover { color: var(--admin-text); background: var(--admin-surface-2); }
+    .admin-tab.active { color: var(--admin-accent); background: var(--admin-accent-glow); }
+    .tab-count { background: var(--admin-surface-3); padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; color: var(--admin-text-dim); }
+    .admin-tab.active .tab-count { background: rgba(200, 169, 126, 0.2); color: var(--admin-accent); }
+
+    .admin-content { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ==================== COMPONENTS ==================== */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .section-header h3 { font-size: 1.2rem; font-weight: 600; }
+    .section-header p { color: var(--admin-text-muted); font-size: 0.85rem; }
+
+    .action-btn {
+      padding: 0.6rem 1.2rem; border: none; border-radius: var(--admin-radius-sm); font-size: 0.85rem;
+      font-weight: 500; font-family: inherit; cursor: pointer; transition: var(--admin-transition);
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .action-btn.primary { background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-dark)); color: #fff; }
+    .action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200, 169, 126, 0.3); }
+    .action-btn.primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+    .action-btn.secondary { background: var(--admin-surface-2); border: 1px solid var(--admin-border); color: var(--admin-text-muted); }
+    .action-btn.secondary:hover { border-color: var(--admin-border-hover); color: var(--admin-text); }
+    .action-btn.danger { background: var(--admin-danger-bg); color: var(--admin-danger); }
+    .action-btn.danger:hover { background: rgba(248, 113, 113, 0.2); }
+    .action-btn.success { background: var(--admin-success-bg); color: var(--admin-success); }
+    .action-btn.success:hover { background: rgba(52, 211, 153, 0.2); }
+    .action-btn .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ==================== IMAGE GRID ==================== */
+    .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
+    .image-card {
+      position: relative; background: var(--admin-surface); border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius); overflow: hidden; transition: var(--admin-transition);
+    }
+    .image-card:hover { border-color: var(--admin-border-hover); transform: translateY(-2px); box-shadow: var(--admin-shadow); }
+    .image-card .image-preview { position: relative; aspect-ratio: 3/4; overflow: hidden; background: var(--admin-surface-2); }
+    .image-card .image-preview img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+    .image-card:hover .image-preview img { transform: scale(1.05); }
+    .image-card .image-overlay {
+      position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center;
+      justify-content: center; gap: 0.5rem; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .image-card:hover .image-overlay { opacity: 1; }
+    .overlay-btn {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%; color: #fff; font-size: 1rem; cursor: pointer; transition: var(--admin-transition);
+    }
+    .overlay-btn:hover { background: var(--admin-accent); border-color: var(--admin-accent); transform: scale(1.1); }
+    .overlay-btn.delete-btn:hover { background: var(--admin-danger); border-color: var(--admin-danger); }
+    .image-card .image-info { padding: 0.8rem 1rem; }
+    .image-card .image-name { font-size: 0.8rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.3rem; }
+    .image-card .image-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--admin-text-dim); }
+    .image-badge { display: inline-block; padding: 0.15rem 0.5rem; background: var(--admin-accent-glow); color: var(--admin-accent); border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
+    .image-card .card-checkbox {
+      position: absolute; top: 0.6rem; left: 0.6rem; z-index: 5; width: 22px; height: 22px;
+      border: 2px solid rgba(255,255,255,0.4); border-radius: 6px; background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: var(--admin-transition); opacity: 0;
+    }
+    .image-card:hover .card-checkbox, .image-card.selected .card-checkbox { opacity: 1; }
+    .image-card.selected .card-checkbox { background: var(--admin-accent); border-color: var(--admin-accent); }
+    .image-card.selected .card-checkbox::after { content: '✓'; color: #fff; font-size: 0.7rem; font-weight: 700; }
+    .image-card.selected { border-color: var(--admin-accent); box-shadow: 0 0 0 2px var(--admin-accent-glow); }
+
+    /* ==================== UPLOAD ==================== */
+    .upload-area {
+      border: 2px dashed var(--admin-border); border-radius: var(--admin-radius-lg); padding: 3rem 2rem;
+      text-align: center; transition: var(--admin-transition); cursor: pointer; background: var(--admin-surface); margin-bottom: 2rem;
+    }
+    .upload-area:hover, .upload-area.dragover { border-color: var(--admin-accent); background: var(--admin-accent-glow); }
+    .upload-area .upload-icon {
+      width: 64px; height: 64px; margin: 0 auto 1rem; background: var(--admin-surface-2);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: var(--admin-transition);
+    }
+    .upload-area:hover .upload-icon { background: var(--admin-accent-glow); transform: scale(1.1); }
+    .upload-area .upload-icon i { font-size: 1.8rem; color: var(--admin-accent); }
+    .upload-area h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .upload-area p { color: var(--admin-text-muted); font-size: 0.85rem; }
+    .upload-area .upload-formats { margin-top: 0.8rem; font-size: 0.75rem; color: var(--admin-text-dim); }
+
+    .upload-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .upload-preview-item { position: relative; background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); overflow: hidden; }
+    .upload-preview-item img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+    .upload-preview-item .preview-info { padding: 0.6rem 0.8rem; }
+    .upload-preview-item .preview-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .upload-preview-item .preview-size { font-size: 0.7rem; color: var(--admin-text-dim); }
+    .upload-preview-item .preview-remove {
+      position: absolute; top: 0.4rem; right: 0.4rem; width: 24px; height: 24px;
+      background: rgba(248, 113, 113, 0.9); border: none; border-radius: 50%; color: #fff; font-size: 0.75rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--admin-transition);
+    }
+    .upload-preview-item .preview-remove:hover { transform: scale(1.15); }
+    .upload-preview-item input[type="text"] {
+      width: 100%; padding: 0.4rem 0.6rem; background: var(--admin-surface-2); border: 1px solid var(--admin-border);
+      border-radius: 4px; color: var(--admin-text); font-size: 0.75rem; font-family: inherit; outline: none; margin-top: 0.4rem;
+    }
+    .upload-preview-item input[type="text"]:focus { border-color: var(--admin-accent); }
+    .upload-preview-item select {
+      width: 100%; padding: 0.35rem 0.5rem; background: var(--admin-surface-2); border: 1px solid var(--admin-border);
+      border-radius: 4px; color: var(--admin-text); font-size: 0.72rem; font-family: inherit; outline: none; margin-top: 0.3rem; cursor: pointer;
+    }
+    .upload-preview-item select:focus { border-color: var(--admin-accent); }
+
+    /* ==================== MODAL ==================== */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000;
+      display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-backdrop.active { opacity: 1; pointer-events: all; }
+    .modal {
+      width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto; background: var(--admin-surface);
+      border: 1px solid var(--admin-border); border-radius: var(--admin-radius-lg); box-shadow: var(--admin-shadow-lg);
+      transform: scale(0.95) translateY(10px); transition: transform 0.3s ease;
+    }
+    .modal-backdrop.active .modal { transform: scale(1) translateY(0); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--admin-border); }
+    .modal-header h3 { font-size: 1.1rem; font-weight: 600; }
+    .modal-close {
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      background: var(--admin-surface-2); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm);
+      color: var(--admin-text-muted); cursor: pointer; transition: var(--admin-transition);
+    }
+    .modal-close:hover { color: var(--admin-danger); border-color: var(--admin-danger); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; padding: 1rem 1.5rem; border-top: 1px solid var(--admin-border); }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--admin-text-muted); margin-bottom: 0.4rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.7rem 1rem; background: var(--admin-surface-2); border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius-sm); color: var(--admin-text); font-size: 0.9rem; font-family: inherit; outline: none; transition: var(--admin-transition);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 3px var(--admin-accent-glow); }
+    .form-group .form-hint { font-size: 0.75rem; color: var(--admin-text-dim); margin-top: 0.3rem; }
+    .preview-modal-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: var(--admin-radius-sm); background: var(--admin-surface-2); margin-bottom: 1rem; }
+
+    /* ==================== TOAST ==================== */
+    .admin-toast {
+      position: fixed; bottom: 2rem; right: 2rem; padding: 0.9rem 1.4rem; background: var(--admin-surface-2);
+      border: 1px solid var(--admin-border); border-radius: var(--admin-radius); box-shadow: var(--admin-shadow-lg);
+      z-index: 10001; display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem;
+      transform: translateY(120%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .admin-toast.active { transform: translateY(0); }
+    .admin-toast.success { border-color: var(--admin-success); }
+    .admin-toast.success i { color: var(--admin-success); }
+    .admin-toast.error { border-color: var(--admin-danger); }
+    .admin-toast.error i { color: var(--admin-danger); }
+    .admin-toast.info { border-color: var(--admin-info); }
+    .admin-toast.info i { color: var(--admin-info); }
+    .admin-toast.warning { border-color: var(--admin-warning); }
+    .admin-toast.warning i { color: var(--admin-warning); }
+
+    /* ==================== STATS ==================== */
+    .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); padding: 1.25rem; transition: var(--admin-transition); }
+    .stat-card:hover { border-color: var(--admin-border-hover); transform: translateY(-2px); }
+    .stat-card .stat-label { font-size: 0.8rem; color: var(--admin-text-muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--admin-accent), #e8d5b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-card .stat-sub { font-size: 0.75rem; color: var(--admin-text-dim); margin-top: 0.2rem; }
+
+    .tip-card {
+      display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.25rem;
+      background: var(--admin-info-bg); border: 1px solid rgba(96, 165, 250, 0.2);
+      border-radius: var(--admin-radius-sm); margin-bottom: 1.5rem;
+    }
+    .tip-card i { color: var(--admin-info); font-size: 1.1rem; margin-top: 0.1rem; }
+    .tip-card .tip-text { font-size: 0.85rem; color: var(--admin-text-muted); line-height: 1.6; }
+    .tip-card .tip-text strong { color: var(--admin-text); }
+    .tip-card.success-tip { background: var(--admin-success-bg); border-color: rgba(52,211,153,0.2); }
+    .tip-card.success-tip i { color: var(--admin-success); }
+    .tip-card.warning-tip { background: var(--admin-warning-bg); border-color: rgba(251,191,36,0.2); }
+    .tip-card.warning-tip i { color: var(--admin-warning); }
+
+    .bulk-actions {
+      display: none; align-items: center; gap: 0.75rem; padding: 0.75rem 1.25rem;
+      background: var(--admin-accent-glow); border: 1px solid rgba(200, 169, 126, 0.3);
+      border-radius: var(--admin-radius); margin-bottom: 1.25rem; animation: fadeIn 0.3s ease;
+    }
+    .bulk-actions.visible { display: flex; }
+    .bulk-actions .bulk-count { font-size: 0.85rem; font-weight: 500; color: var(--admin-accent); }
+    .bulk-actions .bulk-divider { width: 1px; height: 20px; background: var(--admin-border); }
+
+    /* ==================== DEPLOY STATUS ==================== */
+    .deploy-bar {
+      display: none; align-items: center; gap: 1rem; padding: 1rem 1.5rem;
+      background: var(--admin-surface); border: 1px solid var(--admin-border);
+      border-radius: var(--admin-radius); margin-bottom: 1.5rem;
+    }
+    .deploy-bar.active { display: flex; }
+    .deploy-bar .deploy-spinner { width: 20px; height: 20px; border: 2.5px solid var(--admin-border); border-top-color: var(--admin-accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+    .deploy-bar .deploy-text { flex: 1; }
+    .deploy-bar .deploy-text .deploy-title { font-size: 0.9rem; font-weight: 600; }
+    .deploy-bar .deploy-text .deploy-sub { font-size: 0.8rem; color: var(--admin-text-muted); margin-top: 0.15rem; }
+    .deploy-bar .deploy-progress { width: 100%; max-width: 200px; height: 4px; background: var(--admin-surface-3); border-radius: 4px; overflow: hidden; }
+    .deploy-bar .deploy-progress-fill { height: 100%; background: linear-gradient(90deg, var(--admin-accent), #e8d5b8); border-radius: 4px; transition: width 0.4s ease; width: 0%; }
+    .deploy-bar.done { border-color: var(--admin-success); }
+    .deploy-bar.done .deploy-spinner { border-color: var(--admin-success); border-top-color: var(--admin-success); animation: none; }
+    .deploy-bar.error { border-color: var(--admin-danger); }
+
+    .replace-label {
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem;
+      background: var(--admin-surface-2); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm);
+      color: var(--admin-text-muted); font-size: 0.85rem; cursor: pointer; transition: var(--admin-transition);
+    }
+    .replace-label:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+    .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .config-status { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); margin-bottom: 1.5rem; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-dot.connected { background: var(--admin-success); box-shadow: 0 0 8px var(--admin-success); }
+    .status-dot.disconnected { background: var(--admin-danger); box-shadow: 0 0 8px var(--admin-danger); }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .admin-topbar { padding: 0.6rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+      .admin-tabs { padding: 0.6rem 1rem; }
+      .admin-content { padding: 1rem; }
+      .image-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .config-grid { grid-template-columns: 1fr; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .login-card { margin: 1rem; }
+      .modal { margin: 1rem; width: calc(100% - 2rem); }
+      .bulk-actions { flex-wrap: wrap; }
+    }
+    @media (max-width: 480px) {
+      .image-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+      .stats-bar { grid-template-columns: 1fr; }
+      .topbar-actions { display: none; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--admin-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--admin-surface-3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--admin-border-hover); }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-icon"><i class="ri-shield-keyhole-line"></i></div>
+      <h1>Admin Access</h1>
+      <p>Enter your admin password to access the control panel</p>
+      <form id="loginForm" onsubmit="return false;">
+        <div class="login-input-group">
+          <i class="ri-lock-2-line"></i>
+          <input type="password" id="loginPassword" placeholder="Enter admin password" autocomplete="off" autofocus />
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">Access Dashboard</button>
+        <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-wrapper" id="adminWrapper">
+    <div class="admin-topbar">
+      <div class="topbar-brand">
+        <div class="brand-dot"></div>
+        <h2>FIKER <span>Admin Panel</span></h2>
+      </div>
+      <div class="topbar-actions">
+        <a href="index.html" class="topbar-btn" target="_blank"><i class="ri-external-link-line"></i> View Site</a>
+        <button class="topbar-btn danger" onclick="logout()"><i class="ri-logout-box-r-line"></i> Logout</button>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="dashboard" onclick="switchTab('dashboard')"><i class="ri-dashboard-3-line"></i> Dashboard</button>
+      <button class="admin-tab" data-tab="gallery" onclick="switchTab('gallery')"><i class="ri-image-2-line"></i> Gallery <span class="tab-count" id="galleryCount">0</span></button>
+      <button class="admin-tab" data-tab="portfolio" onclick="switchTab('portfolio')"><i class="ri-gallery-line"></i> Portfolio <span class="tab-count" id="portfolioCount">0</span></button>
+      <button class="admin-tab" data-tab="upload" onclick="switchTab('upload')"><i class="ri-upload-cloud-2-line"></i> Upload</button>
+      <button class="admin-tab" data-tab="settings" onclick="switchTab('settings')"><i class="ri-settings-4-line"></i> Settings</button>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ===================== DASHBOARD ===================== -->
+      <div class="tab-panel active" id="tab-dashboard">
+        <div class="section-header"><div><h3>Dashboard</h3><p>Overview of your photography website</p></div></div>
+        <div class="stats-bar">
+          <div class="stat-card"><div class="stat-label">Total Images</div><div class="stat-value" id="statTotal">0</div><div class="stat-sub">Across all pages</div></div>
+          <div class="stat-card"><div class="stat-label">Gallery</div><div class="stat-value" id="statGallery">0</div><div class="stat-sub">Home page gallery</div></div>
+          <div class="stat-card"><div class="stat-label">Portfolio</div><div class="stat-value" id="statPortfolio">0</div><div class="stat-sub">Portfolio page</div></div>
+          <div class="stat-card"><div class="stat-label">GitHub</div><div class="stat-value" id="statGithub">—</div><div class="stat-sub" id="statGithubSub">Not connected</div></div>
+        </div>
+
+        <div class="tip-card success-tip" id="dashboardTip">
+          <i class="ri-magic-line"></i>
+          <div class="tip-text">
+            <strong>Fully Automated!</strong> This admin panel is connected to GitHub. Any changes you make here
+            (adding, editing, removing, or replacing images) are <strong>automatically deployed</strong> to your live website.
+            Just click the buttons — no code needed! 🚀
+          </div>
+        </div>
+
+        <div class="tip-card warning-tip" id="noGithubTip" style="display:none;">
+          <i class="ri-error-warning-line"></i>
+          <div class="tip-text">
+            <strong>GitHub not configured!</strong> Go to <strong>Settings</strong> tab to connect your GitHub repository.
+            Without it, changes can't be pushed to your live website.
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+          <div class="stat-card" style="cursor:pointer;" onclick="switchTab('upload')">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;background:var(--admin-success-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="ri-upload-cloud-2-line" style="color:var(--admin-success);font-size:1.2rem;"></i></div>
+              <div><div style="font-weight:600;font-size:0.95rem;">Upload & Deploy</div><div style="font-size:0.8rem;color:var(--admin-text-muted);">Add photos → auto deploys</div></div>
+            </div>
+          </div>
+          <div class="stat-card" style="cursor:pointer;" onclick="switchTab('gallery')">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;background:var(--admin-info-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="ri-image-edit-line" style="color:var(--admin-info);font-size:1.2rem;"></i></div>
+              <div><div style="font-weight:600;font-size:0.95rem;">Manage Gallery</div><div style="font-size:0.8rem;color:var(--admin-text-muted);">Edit home page images</div></div>
+            </div>
+          </div>
+          <div class="stat-card" style="cursor:pointer;" onclick="switchTab('portfolio')">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;background:var(--admin-warning-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="ri-gallery-line" style="color:var(--admin-warning);font-size:1.2rem;"></i></div>
+              <div><div style="font-weight:600;font-size:0.95rem;">Manage Portfolio</div><div style="font-size:0.8rem;color:var(--admin-text-muted);">Edit portfolio items</div></div>
+            </div>
+          </div>
+          <div class="stat-card" style="cursor:pointer;" onclick="switchTab('settings')">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;background:var(--admin-accent-glow);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="ri-github-line" style="color:var(--admin-accent);font-size:1.2rem;"></i></div>
+              <div><div style="font-weight:600;font-size:0.95rem;">GitHub Settings</div><div style="font-size:0.8rem;color:var(--admin-text-muted);">Configure auto-deploy</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== GALLERY TAB ===================== -->
+      <div class="tab-panel" id="tab-gallery">
+        <div class="section-header">
+          <div><h3>Gallery Manager</h3><p>Manage images in the home page gallery — changes auto-deploy!</p></div>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="action-btn secondary" onclick="selectAllImages('gallery')"><i class="ri-checkbox-multiple-line"></i> Select All</button>
+            <button class="action-btn primary" onclick="switchTab('upload')"><i class="ri-add-line"></i> Add Images</button>
+          </div>
+        </div>
+        <div class="deploy-bar" id="galleryDeployBar">
+          <div class="deploy-spinner"></div>
+          <div class="deploy-text"><div class="deploy-title" id="galleryDeployTitle">Deploying...</div><div class="deploy-sub" id="galleryDeploySub">Pushing changes to GitHub</div></div>
+          <div class="deploy-progress"><div class="deploy-progress-fill" id="galleryDeployProgress"></div></div>
+        </div>
+        <div class="bulk-actions" id="galleryBulkActions">
+          <span class="bulk-count" id="galleryBulkCount">0 selected</span>
+          <div class="bulk-divider"></div>
+          <button class="action-btn danger" onclick="deleteSelectedImages('gallery')"><i class="ri-delete-bin-6-line"></i> Remove & Deploy</button>
+          <button class="action-btn secondary" onclick="deselectAllImages('gallery')"><i class="ri-close-line"></i> Deselect</button>
+        </div>
+        <div class="image-grid" id="galleryGrid"></div>
+      </div>
+
+      <!-- ===================== PORTFOLIO TAB ===================== -->
+      <div class="tab-panel" id="tab-portfolio">
+        <div class="section-header">
+          <div><h3>Portfolio Manager</h3><p>Manage portfolio items — changes auto-deploy!</p></div>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="action-btn secondary" onclick="selectAllImages('portfolio')"><i class="ri-checkbox-multiple-line"></i> Select All</button>
+            <button class="action-btn primary" onclick="openAddPortfolioModal()"><i class="ri-add-line"></i> Add Item</button>
+          </div>
+        </div>
+        <div class="deploy-bar" id="portfolioDeployBar">
+          <div class="deploy-spinner"></div>
+          <div class="deploy-text"><div class="deploy-title" id="portfolioDeployTitle">Deploying...</div><div class="deploy-sub" id="portfolioDeploySub">Pushing changes to GitHub</div></div>
+          <div class="deploy-progress"><div class="deploy-progress-fill" id="portfolioDeployProgress"></div></div>
+        </div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+          <button class="action-btn secondary portfolio-filter active" data-filter="all" onclick="filterPortfolio('all',this)">All</button>
+          <button class="action-btn secondary portfolio-filter" data-filter="portraits" onclick="filterPortfolio('portraits',this)">Portraits</button>
+          <button class="action-btn secondary portfolio-filter" data-filter="weddings" onclick="filterPortfolio('weddings',this)">Weddings</button>
+          <button class="action-btn secondary portfolio-filter" data-filter="fashion" onclick="filterPortfolio('fashion',this)">Fashion</button>
+          <button class="action-btn secondary portfolio-filter" data-filter="family" onclick="filterPortfolio('family',this)">Family</button>
+          <button class="action-btn secondary portfolio-filter" data-filter="maternity" onclick="filterPortfolio('maternity',this)">Maternity</button>
+        </div>
+        <div class="bulk-actions" id="portfolioBulkActions">
+          <span class="bulk-count" id="portfolioBulkCount">0 selected</span>
+          <div class="bulk-divider"></div>
+          <button class="action-btn danger" onclick="deleteSelectedImages('portfolio')"><i class="ri-delete-bin-6-line"></i> Remove & Deploy</button>
+          <button class="action-btn secondary" onclick="deselectAllImages('portfolio')"><i class="ri-close-line"></i> Deselect</button>
+        </div>
+        <div class="image-grid" id="portfolioGrid"></div>
+      </div>
+
+      <!-- ===================== UPLOAD TAB ===================== -->
+      <div class="tab-panel" id="tab-upload">
+        <div class="section-header"><div><h3>Upload & Deploy</h3><p>Add new images — they'll be uploaded to GitHub and deployed automatically</p></div></div>
+        <div class="tip-card">
+          <i class="ri-rocket-2-line"></i>
+          <div class="tip-text"><strong>One-click deploy!</strong> Drop your images, choose where they go, and hit <strong>Upload & Deploy</strong>.
+            Images are uploaded to GitHub, HTML is updated, and Vercel auto-deploys your live site. Done! ✨</div>
+        </div>
+        <div class="deploy-bar" id="uploadDeployBar">
+          <div class="deploy-spinner"></div>
+          <div class="deploy-text"><div class="deploy-title" id="uploadDeployTitle">Uploading...</div><div class="deploy-sub" id="uploadDeploySub">Preparing images</div></div>
+          <div class="deploy-progress"><div class="deploy-progress-fill" id="uploadDeployProgress"></div></div>
+        </div>
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon"><i class="ri-image-add-line"></i></div>
+          <h4>Drop images here or click to browse</h4>
+          <p>Select one or multiple images to upload</p>
+          <div class="upload-formats">Supported: JPG, PNG, WebP — Max 10MB per file</div>
+          <input type="file" id="fileInput" multiple accept="image/*" style="display:none;" />
+        </div>
+        <div class="upload-preview-grid" id="uploadPreviewGrid"></div>
+        <div id="uploadActions" style="display:none;">
+          <div class="form-group" style="max-width:300px;">
+            <label>Add to Section</label>
+            <select id="uploadDestination">
+              <option value="gallery">Home Gallery</option>
+              <option value="portfolio">Portfolio Page</option>
+              <option value="both">Both Gallery & Portfolio</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button class="action-btn primary" id="deployUploadBtn" onclick="deployUpload()"><i class="ri-rocket-2-line"></i> Upload & Deploy</button>
+            <button class="action-btn danger" onclick="clearUploadPreviews()"><i class="ri-delete-bin-line"></i> Clear All</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== SETTINGS TAB ===================== -->
+      <div class="tab-panel" id="tab-settings">
+        <div class="section-header"><div><h3>Settings</h3><p>Configure GitHub integration and admin password</p></div></div>
+        <div class="tip-card">
+          <i class="ri-github-line"></i>
+          <div class="tip-text"><strong>GitHub Integration:</strong> Connect your repository so the admin panel can upload images
+            and update HTML files directly. Vercel auto-rebuilds on every push!<br/><br/>
+            <strong>Steps:</strong> 1) Go to GitHub → Settings → Developer Settings → Personal Access Tokens → <strong>Tokens (classic)</strong>.
+            2) Generate new token with <strong>repo</strong> scope. 3) Paste it below and save.
+          </div>
+        </div>
+        <div style="max-width:600px;">
+          <div class="config-status" id="githubStatus">
+            <div class="status-dot disconnected" id="githubStatusDot"></div>
+            <span id="githubStatusText">GitHub not connected</span>
+          </div>
+          <div class="form-group"><label>GitHub Personal Access Token</label><input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" /><div class="form-hint">Needs "repo" scope</div></div>
+          <div class="config-grid">
+            <div class="form-group"><label>Repository Owner</label><input type="text" id="githubOwner" placeholder="e.g. shubhamsolanki456" /></div>
+            <div class="form-group"><label>Repository Name</label><input type="text" id="githubRepo" placeholder="e.g. fiker-photography" /></div>
+          </div>
+          <div class="form-group"><label>Branch</label><input type="text" id="githubBranch" value="main" /></div>
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button class="action-btn primary" onclick="saveGitHubConfig()"><i class="ri-save-line"></i> Save Configuration</button>
+            <button class="action-btn secondary" onclick="testGitHubConnection()"><i class="ri-link"></i> Test Connection</button>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--admin-border);margin:2rem 0;" />
+          <div class="section-header"><div><h3>Admin Password</h3><p>Change your admin panel password</p></div></div>
+          <div class="form-group"><label>Current Password</label><input type="password" id="currentPass" placeholder="Enter current password" /></div>
+          <div class="form-group"><label>New Password</label><input type="password" id="newPass" placeholder="Enter new password" /></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPass" placeholder="Confirm new password" /></div>
+          <button class="action-btn primary" onclick="changePassword()"><i class="ri-key-2-line"></i> Change Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal">
+      <div class="modal-header"><h3 id="editModalTitle">Edit Image</h3><button class="modal-close" onclick="closeModal('editModal')"><i class="ri-close-line"></i></button></div>
+      <div class="modal-body">
+        <img class="preview-modal-img" id="editPreviewImg" src="" alt="Preview" />
+        <div class="form-group"><label>Image Source (File Path)</label><input type="text" id="editImgSrc" placeholder="assets/image-1.webp" /><div class="form-hint">Path relative to project root</div></div>
+        <div class="form-group"><label>Alt Text / Description</label><input type="text" id="editImgAlt" placeholder="Portrait Photography" /></div>
+        <div class="form-group" id="editCategoryGroup" style="display:none;"><label>Category</label><select id="editImgCategory"><option value="portraits">Portraits</option><option value="weddings">Weddings</option><option value="fashion">Fashion</option><option value="family">Family</option><option value="maternity">Maternity</option></select></div>
+        <div class="form-group" id="editTitleGroup" style="display:none;"><label>Title Overlay</label><input type="text" id="editImgTitle" placeholder="Golden Heritage" /></div>
+        <div class="form-group" id="editSubtitleGroup" style="display:none;"><label>Subtitle / Caption</label><input type="text" id="editImgSubtitle" placeholder="Traditional Portrait" /></div>
+        <div class="form-group"><label>Replace Image File</label><div><input type="file" id="replaceFileInput" accept="image/*" onchange="handleReplacePreview(this)" style="display:none;" /><label for="replaceFileInput" class="replace-label"><i class="ri-image-edit-line"></i> Choose new image</label></div><div class="form-hint">Upload a new file to replace this image on GitHub</div></div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn secondary" onclick="closeModal('editModal')">Cancel</button>
+        <button class="action-btn primary" id="editSaveBtn" onclick="saveImageEdit()"><i class="ri-save-line"></i> Save & Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD PORTFOLIO MODAL -->
+  <div class="modal-backdrop" id="addPortfolioModal">
+    <div class="modal">
+      <div class="modal-header"><h3>Add Portfolio Item</h3><button class="modal-close" onclick="closeModal('addPortfolioModal')"><i class="ri-close-line"></i></button></div>
+      <div class="modal-body">
+        <div class="form-group"><label>Image File</label><div><input type="file" id="addPortfolioFile" accept="image/*" onchange="handleAddPortfolioPreview(this)" style="display:none;" /><label for="addPortfolioFile" class="replace-label"><i class="ri-image-add-line"></i> Choose image</label></div></div>
+        <img class="preview-modal-img" id="addPortfolioPreview" src="" alt="Preview" style="display:none;" />
+        <div class="form-group"><label>Image Source Path</label><input type="text" id="addPortfolioSrc" placeholder="assets/new-image.webp" /><div class="form-hint">Auto-filled when you choose a file</div></div>
+        <div class="form-group"><label>Category</label><select id="addPortfolioCategory"><option value="portraits">Portraits</option><option value="weddings">Weddings</option><option value="fashion">Fashion</option><option value="family">Family</option><option value="maternity">Maternity</option></select></div>
+        <div class="form-group"><label>Title</label><input type="text" id="addPortfolioTitle" placeholder="e.g. Golden Hour" /></div>
+        <div class="form-group"><label>Subtitle / Caption</label><input type="text" id="addPortfolioSubtitle" placeholder="e.g. Portrait Session" /></div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn secondary" onclick="closeModal('addPortfolioModal')">Cancel</button>
+        <button class="action-btn primary" id="addPortfolioBtn" onclick="addPortfolioItem()"><i class="ri-rocket-2-line"></i> Add & Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div class="modal-backdrop" id="deleteModal">
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-header"><h3>Confirm Removal</h3><button class="modal-close" onclick="closeModal('deleteModal')"><i class="ri-close-line"></i></button></div>
+      <div class="modal-body" style="text-align:center;">
+        <i class="ri-error-warning-line" style="font-size:3rem;color:var(--admin-danger);margin-bottom:1rem;"></i>
+        <p id="deleteMessage" style="color:var(--admin-text-muted);font-size:0.9rem;line-height:1.6;"></p>
+      </div>
+      <div class="modal-footer" style="justify-content:center;">
+        <button class="action-btn secondary" onclick="closeModal('deleteModal')">Cancel</button>
+        <button class="action-btn danger" id="confirmDeleteBtn"><i class="ri-delete-bin-6-line"></i> Remove & Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="admin-toast" id="adminToast"><i class="ri-check-double-line"></i><span id="adminToastText">Action completed</span></div>
+
+  <script>
+    // ======================================================================
+    // DATA
+    // ======================================================================
+    const DEFAULT_PASSWORD = 'fiker2026';
+    const INSTAGRAM_URL = 'https://www.instagram.com/fikerphotography16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==';
+
+    const DEFAULT_GALLERY = [
+      { src: 'assets/image-1.webp', alt: 'Gallery Photo 1' },
+      { src: 'assets/image-2.webp', alt: 'Gallery Photo 2' },
+      { src: 'assets/image-3.webp', alt: 'Gallery Photo 3' },
+      { src: 'assets/image-4.webp', alt: 'Gallery Photo 4' },
+      { src: 'assets/image-5.webp', alt: 'Gallery Photo 5' },
+      { src: 'assets/image-6.webp', alt: 'Gallery Photo 6' },
+      { src: 'assets/image-7.webp', alt: 'Gallery Photo 7' },
+      { src: 'assets/image-8.webp', alt: 'Gallery Photo 8' },
+    ];
+
+    const DEFAULT_PORTFOLIO = [
+      { src:'assets/Fiker 2.webp',alt:'Portrait',category:'portraits',title:'Tiny Steps',subtitle:'Newborn Portrait' },
+      { src:'assets/Fiker 3.webp',alt:'Maternity',category:'maternity',title:'Expecting',subtitle:'Maternity Details' },
+      { src:'assets/Fiker 4.webp',alt:'Wedding',category:'weddings',title:'The Groomsmen',subtitle:'Wedding Celebration' },
+      { src:'assets/Fiker 5.webp',alt:'Maternity',category:'maternity',title:'Soft Beginnings',subtitle:'Maternity Session' },
+      { src:'assets/Fiker 6.webp',alt:'Portrait',category:'portraits',title:'Golden Heritage',subtitle:'Traditional Portrait' },
+      { src:'assets/Fiker 7.webp',alt:'Maternity',category:'maternity',title:'Love Grows',subtitle:'Outdoor Maternity' },
+      { src:'assets/Fiker 8.webp',alt:'Portrait',category:'portraits',title:'Traditional Grace',subtitle:'B&W Portrait' },
+      { src:'assets/Fiker 9.webp',alt:'Fashion',category:'fashion',title:'The Groom',subtitle:'Fashionable Wedding' },
+      { src:'assets/Fiker 10.webp',alt:'Family',category:'family',title:'Culture & Joy',subtitle:'Family Heritage' },
+      { src:'assets/Fiker 11.webp',alt:'Portrait',category:'portraits',title:'Happy Moments',subtitle:'Portrait' },
+      { src:'assets/Fiker 12.webp',alt:'Wedding',category:'weddings',title:'The Bridesmaids',subtitle:'Wedding Celebration' },
+      { src:'assets/Fiker 13.webp',alt:'Portrait',category:'portraits',title:'The Elegant Bride',subtitle:'Bridal Portrait' },
+      { src:'assets/Fiker 14.webp',alt:'Wedding',category:'weddings',title:'Sacred Kiss',subtitle:'Wedding Ceremony' },
+      { src:'assets/Fiker 15.webp',alt:'Family',category:'family',title:'Royal Couple',subtitle:'Family Legacy' },
+      { src:'assets/image-1.webp',alt:'Portrait',category:'portraits',title:'Soulful Eyes',subtitle:'Portrait Session' },
+      { src:'assets/image-2.webp',alt:'Wedding',category:'weddings',title:'The Distinguished Groom',subtitle:'Groom Portrait' },
+      { src:'assets/image-3.webp',alt:'Maternity',category:'maternity',title:"Nature's Beauty",subtitle:'Maternity Session' },
+      { src:'assets/image-4.webp',alt:'Fashion',category:'fashion',title:'Deep Connection',subtitle:'Fashion Editorial' },
+      { src:'assets/image-5.webp',alt:'Family',category:'weddings',title:'Cultured Couple',subtitle:'Fashion Editorial' },
+      { src:'assets/image-6.webp',alt:'Portrait',category:'portraits',title:'The Graduate',subtitle:'Graduation Portrait' },
+      { src:'assets/image-7.webp',alt:'Portrait',category:'portraits',title:'Elegant Bride',subtitle:'Bridal Portrait' },
+      { src:'assets/image-8.webp',alt:'Wedding',category:'portraits',title:'Natural Portrait',subtitle:'Portrait Session' },
+      { src:'assets/portfolio-1.webp',alt:'Wedding',category:'weddings',title:'Elegant Couple',subtitle:'Portrait Session' },
+      { src:'assets/portfolio-2.webp',alt:'Wedding',category:'weddings',title:'Eternal Love',subtitle:'Wedding Portrait' },
+      { src:'assets/portfolio-3.webp',alt:'Wedding',category:'weddings',title:'Wedding Details',subtitle:'Bridal Accessories' },
+    ];
+
+    // ======================================================================
+    // STATE
+    // ======================================================================
+    let galleryImages = [], portfolioItems = [];
+    let selectedGallery = new Set(), selectedPortfolio = new Set();
+    let uploadFiles = [];
+    let currentEditType = '', currentEditIndex = -1, currentPortfolioFilter = 'all';
+    let replaceFileData = null; // holds {name, base64} for replacement uploads
+
+    // ======================================================================
+    // INIT
+    // ======================================================================
+    function init() {
+      loadData(); renderGallery(); renderPortfolio(); updateStats(); updateCounts(); loadGitHubConfig(); checkGithubDashboard();
+    }
+    function loadData() {
+      const sg = localStorage.getItem('fiker_gallery'), sp = localStorage.getItem('fiker_portfolio');
+      galleryImages = sg ? JSON.parse(sg) : [...DEFAULT_GALLERY];
+      portfolioItems = sp ? JSON.parse(sp) : [...DEFAULT_PORTFOLIO];
+    }
+    function saveData() {
+      localStorage.setItem('fiker_gallery', JSON.stringify(galleryImages));
+      localStorage.setItem('fiker_portfolio', JSON.stringify(portfolioItems));
+    }
+    function checkGithubDashboard() {
+      const cfg = getGitHubConfig();
+      if (cfg) {
+        document.getElementById('dashboardTip').style.display = 'flex';
+        document.getElementById('noGithubTip').style.display = 'none';
+        document.getElementById('statGithub').textContent = '✓';
+        document.getElementById('statGithubSub').textContent = cfg.owner + '/' + cfg.repo;
+      } else {
+        document.getElementById('dashboardTip').style.display = 'none';
+        document.getElementById('noGithubTip').style.display = 'flex';
+        document.getElementById('statGithub').textContent = '✗';
+        document.getElementById('statGithubSub').textContent = 'Not connected';
+      }
+    }
+
+    // ======================================================================
+    // AUTH
+    // ======================================================================
+    function getPassword() { return localStorage.getItem('fiker_admin_pass') || DEFAULT_PASSWORD; }
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (document.getElementById('loginPassword').value === getPassword()) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminWrapper').classList.add('active');
+        sessionStorage.setItem('fiker_admin_auth', '1');
+        init();
+      } else {
+        document.getElementById('loginError').classList.add('visible');
+        document.getElementById('loginPassword').value = '';
+        setTimeout(() => document.getElementById('loginError').classList.remove('visible'), 3000);
+      }
+    });
+    if (sessionStorage.getItem('fiker_admin_auth') === '1') {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('adminWrapper').classList.add('active');
+      init();
+    }
+    function logout() { sessionStorage.removeItem('fiker_admin_auth'); location.reload(); }
+    function changePassword() {
+      const cur = document.getElementById('currentPass').value, np = document.getElementById('newPass').value, cp = document.getElementById('confirmPass').value;
+      if (cur !== getPassword()) return showAdminToast('Current password is incorrect','error');
+      if (np.length < 4) return showAdminToast('New password must be at least 4 characters','error');
+      if (np !== cp) return showAdminToast('Passwords do not match','error');
+      localStorage.setItem('fiker_admin_pass', np);
+      document.getElementById('currentPass').value = document.getElementById('newPass').value = document.getElementById('confirmPass').value = '';
+      showAdminToast('Password changed!','success');
+    }
+
+    // ======================================================================
+    // GITHUB API — THE CORE AUTOMATION
+    // ======================================================================
+    function getGitHubConfig() {
+      const s = localStorage.getItem('fiker_github_config');
+      if (!s) return null;
+      const c = JSON.parse(s);
+      return (c.token && c.owner && c.repo) ? c : null;
+    }
+
+    // Translate GitHub API errors into clear, user-friendly messages
+    function friendlyGitHubError(status, msg) {
+      const m = (msg || '').toLowerCase();
+      if (m.includes('not accessible by personal access token') || m.includes('resource not accessible')) {
+        return '🔑 Token missing permissions! Go to github.com/settings/tokens → create a CLASSIC token with "repo" scope checked. Fine-grained tokens need "Contents: Read & Write" permission for this specific repo.';
+      }
+      if (status === 401 || m.includes('bad credentials')) {
+        return '🔒 Invalid token! Your GitHub token is expired or incorrect. Generate a new one at github.com/settings/tokens';
+      }
+      if (status === 404 || m.includes('not found')) {
+        return '❌ Repository not found! Check the owner/repo name in Settings, or your token may not have access to this repo.';
+      }
+      if (status === 409 || m.includes('conflict') || m.includes('sha')) {
+        return '⚠️ File conflict — someone else may have edited this file. Please refresh and try again.';
+      }
+      if (status === 422) {
+        return '⚠️ GitHub rejected the request. The file might be too large or the path invalid.';
+      }
+      return msg || `GitHub API error (${status})`;
+    }
+
+    async function ghGet(path) {
+      const c = getGitHubConfig();
+      const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${c.branch||'main'}`, {
+        headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(friendlyGitHubError(r.status, e.message));
+      }
+      return r.json();
+    }
+
+    async function ghPut(path, content, sha, message) {
+      const c = getGitHubConfig();
+      const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: c.branch || 'main' };
+      if (sha) body.sha = sha;
+      const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(friendlyGitHubError(r.status, e.message));
+      }
+      return r.json();
+    }
+
+    async function ghPutBinary(path, base64Content, sha, message) {
+      const c = getGitHubConfig();
+      const body = { message, content: base64Content, branch: c.branch || 'main' };
+      if (sha) body.sha = sha;
+      const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(friendlyGitHubError(r.status, e.message));
+      }
+      return r.json();
+    }
+
+    // ======================================================================
+    // HTML GENERATORS — build the exact HTML between the markers
+    // ======================================================================
+    function buildGalleryHTML() {
+      let html = '\n      <!-- ADMIN:GALLERY_START -->\n';
+      galleryImages.forEach(img => {
+        html += `      <img src="${img.src}" alt="${img.alt}" class="gallery__img" />\n`;
+      });
+      html += '      <!-- ADMIN:GALLERY_END -->\n';
+      return html;
+    }
+
+    function buildInstagramHTML() {
+      let html = '\n      <!-- ADMIN:INSTAGRAM_START -->\n';
+      galleryImages.forEach((img, i) => {
+        html += `      <a href="${INSTAGRAM_URL}"\n        target="_blank" rel="noopener noreferrer" class="instagram__link"><img src="${img.src}"\n          alt="Instagram Photo ${i+1}" />\n        <div class="instagram__overlay"><i class="ri-instagram-line"></i></div>\n      </a>\n`;
+      });
+      html += '      <!-- ADMIN:INSTAGRAM_END -->\n';
+      return html;
+    }
+
+    function buildPortfolioHTML() {
+      let html = '\n      <!-- ADMIN:PORTFOLIO_START -->\n';
+      portfolioItems.forEach(item => {
+        html += `      <div class="portfolio__item" data-category="${item.category}"><img src="${item.src}" alt="${item.alt}" />\n`;
+        html += `        <div class="portfolio__item__overlay">\n`;
+        html += `          <h4>${item.title}</h4>\n`;
+        html += `          <p>${item.subtitle}</p>\n`;
+        html += `        </div>\n`;
+        html += `      </div>\n`;
+      });
+      html += '      <!-- ADMIN:PORTFOLIO_END -->\n';
+      return html;
+    }
+
+    function replaceMarkerContent(fileContent, startMarker, endMarker, newContent) {
+      const startIdx = fileContent.indexOf(startMarker);
+      const endIdx = fileContent.indexOf(endMarker);
+      if (startIdx === -1 || endIdx === -1) throw new Error(`Markers not found: ${startMarker}`);
+      // Find the start of the line containing startMarker
+      const beforeStart = fileContent.lastIndexOf('\n', startIdx);
+      // Find the end of the line containing endMarker
+      const afterEnd = fileContent.indexOf('\n', endIdx + endMarker.length);
+      return fileContent.substring(0, beforeStart) + newContent + fileContent.substring(afterEnd);
+    }
+
+    // ======================================================================
+    // DEPLOY FUNCTIONS — push changes to GitHub automatically
+    // ======================================================================
+    function showDeployBar(section, title, sub) {
+      const bar = document.getElementById(`${section}DeployBar`);
+      bar.classList.add('active'); bar.classList.remove('done','error');
+      document.getElementById(`${section}DeployTitle`).textContent = title;
+      document.getElementById(`${section}DeploySub`).textContent = sub;
+      document.getElementById(`${section}DeployProgress`).style.width = '0%';
+    }
+    function updateDeployProgress(section, pct, sub) {
+      document.getElementById(`${section}DeployProgress`).style.width = pct + '%';
+      if (sub) document.getElementById(`${section}DeploySub`).textContent = sub;
+    }
+    function finishDeployBar(section, success, msg) {
+      const bar = document.getElementById(`${section}DeployBar`);
+      bar.classList.add(success ? 'done' : 'error');
+      document.getElementById(`${section}DeployTitle`).textContent = success ? '✓ Deployed!' : '✗ Failed';
+      document.getElementById(`${section}DeploySub`).textContent = msg || '';
+      document.getElementById(`${section}DeployProgress`).style.width = '100%';
+      setTimeout(() => bar.classList.remove('active','done','error'), 5000);
+    }
+
+    async function deployGalleryChanges() {
+      const cfg = getGitHubConfig();
+      if (!cfg) { showAdminToast('GitHub not configured! Go to Settings.','error'); return; }
+      showDeployBar('gallery', 'Deploying gallery...', 'Fetching index.html from GitHub');
+      try {
+        updateDeployProgress('gallery', 20, 'Fetching index.html...');
+        const file = await ghGet('index.html');
+        const content = decodeURIComponent(escape(atob(file.content.replace(/\n/g,''))));
+
+        updateDeployProgress('gallery', 50, 'Updating gallery & instagram sections...');
+        let updated = replaceMarkerContent(content, '<!-- ADMIN:GALLERY_START -->', '<!-- ADMIN:GALLERY_END -->', buildGalleryHTML());
+        updated = replaceMarkerContent(updated, '<!-- ADMIN:INSTAGRAM_START -->', '<!-- ADMIN:INSTAGRAM_END -->', buildInstagramHTML());
+
+        updateDeployProgress('gallery', 80, 'Committing to GitHub...');
+        await ghPut('index.html', updated, file.sha, '✨ Update gallery images via admin panel');
+        updateDeployProgress('gallery', 100);
+        finishDeployBar('gallery', true, 'Gallery updated! Vercel will auto-deploy in ~30s.');
+        showAdminToast('Gallery deployed! Site updating...','success');
+      } catch(e) {
+        console.error(e);
+        finishDeployBar('gallery', false, e.message);
+        showAdminToast('Deploy failed: ' + e.message, 'error');
+      }
+    }
+
+    async function deployPortfolioChanges() {
+      const cfg = getGitHubConfig();
+      if (!cfg) { showAdminToast('GitHub not configured! Go to Settings.','error'); return; }
+      showDeployBar('portfolio', 'Deploying portfolio...', 'Fetching portfolio.html from GitHub');
+      try {
+        updateDeployProgress('portfolio', 20, 'Fetching portfolio.html...');
+        const file = await ghGet('portfolio.html');
+        const content = decodeURIComponent(escape(atob(file.content.replace(/\n/g,''))));
+
+        updateDeployProgress('portfolio', 50, 'Updating portfolio items...');
+        const updated = replaceMarkerContent(content, '<!-- ADMIN:PORTFOLIO_START -->', '<!-- ADMIN:PORTFOLIO_END -->', buildPortfolioHTML());
+
+        updateDeployProgress('portfolio', 80, 'Committing to GitHub...');
+        await ghPut('portfolio.html', updated, file.sha, '✨ Update portfolio via admin panel');
+        updateDeployProgress('portfolio', 100);
+        finishDeployBar('portfolio', true, 'Portfolio updated! Vercel will auto-deploy in ~30s.');
+        showAdminToast('Portfolio deployed! Site updating...','success');
+      } catch(e) {
+        console.error(e);
+        finishDeployBar('portfolio', false, e.message);
+        showAdminToast('Deploy failed: ' + e.message, 'error');
+      }
+    }
+
+    async function uploadImageToGitHub(fileName, base64Data) {
+      // Strip data:image/xxx;base64, prefix
+      const pure = base64Data.includes(',') ? base64Data.split(',')[1] : base64Data;
+      const path = `assets/${fileName}`;
+      // Check if file already exists (to get sha for overwrite)
+      let sha = null;
+      try {
+        const existing = await ghGet(path);
+        sha = existing.sha;
+      } catch(e) { /* file doesn't exist, that's fine */ }
+      await ghPutBinary(path, pure, sha, `📸 Upload ${fileName} via admin panel`);
+    }
+
+    // ======================================================================
+    // UPLOAD & DEPLOY — fully automated
+    // ======================================================================
+    async function deployUpload() {
+      if (!uploadFiles.length) return showAdminToast('No files to upload', 'warning');
+      const cfg = getGitHubConfig();
+      if (!cfg) return showAdminToast('GitHub not configured! Go to Settings.', 'error');
+      const dest = document.getElementById('uploadDestination').value;
+      const btn = document.getElementById('deployUploadBtn');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Deploying...';
+
+      showDeployBar('upload', 'Uploading images...', `0/${uploadFiles.length} images uploaded`);
+
+      try {
+        // Step 1: Upload all image files to GitHub
+        for (let i = 0; i < uploadFiles.length; i++) {
+          updateDeployProgress('upload', Math.round(((i) / uploadFiles.length) * 50), `Uploading ${uploadFiles[i].name}...`);
+          await uploadImageToGitHub(uploadFiles[i].name, uploadFiles[i].data);
+        }
+        updateDeployProgress('upload', 50, 'Images uploaded! Updating HTML...');
+
+        // Step 2: Add to local data
+        uploadFiles.forEach(f => {
+          const src = `assets/${f.name}`;
+          if (dest === 'gallery' || dest === 'both') {
+            galleryImages.push({ src, alt: f.title || f.name });
+          }
+          if (dest === 'portfolio' || dest === 'both') {
+            portfolioItems.push({
+              src, alt: f.title || f.category || 'Photo',
+              category: f.category || 'portraits',
+              title: f.title || 'Untitled',
+              subtitle: (f.category || 'portraits').charAt(0).toUpperCase() + (f.category || 'portraits').slice(1) + ' Session'
+            });
+          }
+        });
+        saveData();
+
+        // Step 3: Update HTML files on GitHub
+        if (dest === 'gallery' || dest === 'both') {
+          updateDeployProgress('upload', 65, 'Updating index.html gallery...');
+          const idxFile = await ghGet('index.html');
+          const idxContent = decodeURIComponent(escape(atob(idxFile.content.replace(/\n/g,''))));
+          let updated = replaceMarkerContent(idxContent, '<!-- ADMIN:GALLERY_START -->', '<!-- ADMIN:GALLERY_END -->', buildGalleryHTML());
+          updated = replaceMarkerContent(updated, '<!-- ADMIN:INSTAGRAM_START -->', '<!-- ADMIN:INSTAGRAM_END -->', buildInstagramHTML());
+          await ghPut('index.html', updated, idxFile.sha, '✨ Add gallery images via admin panel');
+        }
+
+        if (dest === 'portfolio' || dest === 'both') {
+          updateDeployProgress('upload', 85, 'Updating portfolio.html...');
+          const pFile = await ghGet('portfolio.html');
+          const pContent = decodeURIComponent(escape(atob(pFile.content.replace(/\n/g,''))));
+          const updated = replaceMarkerContent(pContent, '<!-- ADMIN:PORTFOLIO_START -->', '<!-- ADMIN:PORTFOLIO_END -->', buildPortfolioHTML());
+          await ghPut('portfolio.html', updated, pFile.sha, '✨ Add portfolio items via admin panel');
+        }
+
+        updateDeployProgress('upload', 100);
+        finishDeployBar('upload', true, `${uploadFiles.length} image(s) uploaded & deployed! Vercel auto-deploys in ~30s.`);
+        showAdminToast(`${uploadFiles.length} image(s) uploaded & deployed! 🚀`, 'success');
+
+        uploadFiles = [];
+        renderUploadPreviews();
+        renderGallery(); renderPortfolio(); updateStats(); updateCounts();
+      } catch(e) {
+        console.error(e);
+        finishDeployBar('upload', false, e.message);
+        showAdminToast('Deploy failed: ' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="ri-rocket-2-line"></i> Upload & Deploy';
+      }
+    }
+
+    // ======================================================================
+    // TABS
+    // ======================================================================
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    }
+
+    // ======================================================================
+    // GALLERY RENDER
+    // ======================================================================
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      if (!galleryImages.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="ri-image-line"></i><h4>No gallery images</h4><p>Upload images to add them here.</p></div>'; return; }
+      grid.innerHTML = galleryImages.map((img, i) => `
+        <div class="image-card ${selectedGallery.has(i)?'selected':''}" data-index="${i}">
+          <div class="card-checkbox" onclick="toggleSelection('gallery',${i},event)"></div>
+          <div class="image-preview">
+            <img src="${img.src}" alt="${img.alt}" onerror="this.style.opacity='0.3'" />
+            <div class="image-overlay">
+              <button class="overlay-btn" title="Edit" onclick="openEditModal('gallery',${i})"><i class="ri-edit-line"></i></button>
+              <button class="overlay-btn" title="Preview" onclick="window.open('${img.src}','_blank')"><i class="ri-eye-line"></i></button>
+              <button class="overlay-btn delete-btn" title="Remove" onclick="confirmDelete('gallery',${i})"><i class="ri-delete-bin-6-line"></i></button>
+            </div>
+          </div>
+          <div class="image-info"><div class="image-name">${img.src.split('/').pop()}</div><div class="image-meta"><span>${img.alt}</span><span class="image-badge">Gallery</span></div></div>
+        </div>`).join('');
+    }
+
+    // ======================================================================
+    // PORTFOLIO RENDER
+    // ======================================================================
+    function renderPortfolio() {
+      const grid = document.getElementById('portfolioGrid');
+      const filtered = currentPortfolioFilter === 'all' ? portfolioItems : portfolioItems.filter(p => p.category === currentPortfolioFilter);
+      if (!filtered.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="ri-gallery-line"></i><h4>No portfolio items${currentPortfolioFilter!=='all'?' in this category':''}</h4><p>Add portfolio items above.</p></div>`; return; }
+      grid.innerHTML = filtered.map(item => {
+        const ri = portfolioItems.indexOf(item);
+        return `<div class="image-card ${selectedPortfolio.has(ri)?'selected':''}" data-index="${ri}">
+          <div class="card-checkbox" onclick="toggleSelection('portfolio',${ri},event)"></div>
+          <div class="image-preview">
+            <img src="${item.src}" alt="${item.alt}" onerror="this.style.opacity='0.3'" />
+            <div class="image-overlay">
+              <button class="overlay-btn" title="Edit" onclick="openEditModal('portfolio',${ri})"><i class="ri-edit-line"></i></button>
+              <button class="overlay-btn" title="Preview" onclick="window.open('${item.src}','_blank')"><i class="ri-eye-line"></i></button>
+              <button class="overlay-btn delete-btn" title="Remove" onclick="confirmDelete('portfolio',${ri})"><i class="ri-delete-bin-6-line"></i></button>
+            </div>
+          </div>
+          <div class="image-info"><div class="image-name">${item.title||item.src.split('/').pop()}</div><div class="image-meta"><span>${item.subtitle||item.alt}</span><span class="image-badge">${item.category}</span></div></div>
+        </div>`;
+      }).join('');
+    }
+    function filterPortfolio(f, btn) {
+      currentPortfolioFilter = f;
+      document.querySelectorAll('.portfolio-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active'); deselectAllImages('portfolio'); renderPortfolio();
+    }
+
+    // ======================================================================
+    // SELECTION
+    // ======================================================================
+    function toggleSelection(type, index, event) {
+      event.stopPropagation();
+      const set = type==='gallery'?selectedGallery:selectedPortfolio;
+      set.has(index)?set.delete(index):set.add(index);
+      updateSelectionUI(type); type==='gallery'?renderGallery():renderPortfolio();
+    }
+    function selectAllImages(type) {
+      if (type==='gallery') { galleryImages.forEach((_,i)=>selectedGallery.add(i)); renderGallery(); }
+      else { const items = currentPortfolioFilter==='all'?portfolioItems:portfolioItems.filter(p=>p.category===currentPortfolioFilter); items.forEach(item=>selectedPortfolio.add(portfolioItems.indexOf(item))); renderPortfolio(); }
+      updateSelectionUI(type);
+    }
+    function deselectAllImages(type) { (type==='gallery'?selectedGallery:selectedPortfolio).clear(); type==='gallery'?renderGallery():renderPortfolio(); updateSelectionUI(type); }
+    function updateSelectionUI(type) {
+      const set = type==='gallery'?selectedGallery:selectedPortfolio;
+      const ba = document.getElementById(`${type}BulkActions`);
+      document.getElementById(`${type}BulkCount`).textContent = `${set.size} selected`;
+      set.size>0?ba.classList.add('visible'):ba.classList.remove('visible');
+    }
+
+    // ======================================================================
+    // EDIT MODAL
+    // ======================================================================
+    function openEditModal(type, index) {
+      currentEditType = type; currentEditIndex = index; replaceFileData = null;
+      const item = type==='gallery'?galleryImages[index]:portfolioItems[index];
+      document.getElementById('editModalTitle').textContent = type==='gallery'?'Edit Gallery Image':'Edit Portfolio Item';
+      document.getElementById('editPreviewImg').src = item.src;
+      document.getElementById('editImgSrc').value = item.src;
+      document.getElementById('editImgAlt').value = item.alt || '';
+      const show = type==='portfolio';
+      document.getElementById('editCategoryGroup').style.display = show?'block':'none';
+      document.getElementById('editTitleGroup').style.display = show?'block':'none';
+      document.getElementById('editSubtitleGroup').style.display = show?'block':'none';
+      if (show) {
+        document.getElementById('editImgCategory').value = item.category||'portraits';
+        document.getElementById('editImgTitle').value = item.title||'';
+        document.getElementById('editImgSubtitle').value = item.subtitle||'';
+      }
+      openModal('editModal');
+    }
+
+    function handleReplacePreview(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('editPreviewImg').src = e.target.result;
+          replaceFileData = { name: input.files[0].name, data: e.target.result };
+          document.getElementById('editImgSrc').value = 'assets/' + input.files[0].name;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function saveImageEdit() {
+      const src = document.getElementById('editImgSrc').value.trim();
+      const alt = document.getElementById('editImgAlt').value.trim();
+      if (!src) return showAdminToast('Image source is required','error');
+
+      const btn = document.getElementById('editSaveBtn');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Deploying...';
+      const section = currentEditType === 'gallery' ? 'gallery' : 'portfolio';
+
+      try {
+        // If replacing the image file, upload it first
+        if (replaceFileData) {
+          showAdminToast('Uploading new image to GitHub...','info');
+          await uploadImageToGitHub(replaceFileData.name, replaceFileData.data);
+        }
+
+        // Update local data
+        if (currentEditType === 'gallery') {
+          galleryImages[currentEditIndex] = { src, alt };
+        } else {
+          portfolioItems[currentEditIndex] = {
+            src, alt,
+            category: document.getElementById('editImgCategory').value,
+            title: document.getElementById('editImgTitle').value.trim(),
+            subtitle: document.getElementById('editImgSubtitle').value.trim()
+          };
+        }
+        saveData();
+
+        // Deploy to GitHub
+        if (currentEditType === 'gallery') {
+          await deployGalleryChanges();
+        } else {
+          await deployPortfolioChanges();
+        }
+
+        renderGallery(); renderPortfolio(); updateStats(); updateCounts();
+        closeModal('editModal');
+        replaceFileData = null;
+      } catch(e) {
+        showAdminToast('Error: ' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="ri-save-line"></i> Save & Deploy';
+      }
+    }
+
+    // ======================================================================
+    // DELETE
+    // ======================================================================
+    function confirmDelete(type, index) {
+      const item = type==='gallery'?galleryImages[index]:portfolioItems[index];
+      const name = item.title||item.src.split('/').pop();
+      document.getElementById('deleteMessage').innerHTML = `Are you sure you want to remove <strong>"${name}"</strong>?<br/>This will update your live website automatically.`;
+      document.getElementById('confirmDeleteBtn').onclick = async function() {
+        this.disabled = true; this.innerHTML = '<span class="spinner"></span> Deploying...';
+        if (type==='gallery') { galleryImages.splice(index,1); selectedGallery.clear(); }
+        else { portfolioItems.splice(index,1); selectedPortfolio.clear(); }
+        saveData();
+        try {
+          if (type==='gallery') await deployGalleryChanges(); else await deployPortfolioChanges();
+        } catch(e) { showAdminToast('Deploy error: '+e.message,'error'); }
+        renderGallery(); renderPortfolio(); updateStats(); updateCounts();
+        closeModal('deleteModal');
+        this.disabled = false; this.innerHTML = '<i class="ri-delete-bin-6-line"></i> Remove & Deploy';
+      };
+      openModal('deleteModal');
+    }
+
+    function deleteSelectedImages(type) {
+      const set = type==='gallery'?selectedGallery:selectedPortfolio;
+      if (!set.size) return;
+      document.getElementById('deleteMessage').innerHTML = `Remove <strong>${set.size} image(s)</strong>?<br/>Your live website will be updated automatically.`;
+      document.getElementById('confirmDeleteBtn').onclick = async function() {
+        this.disabled = true; this.innerHTML = '<span class="spinner"></span> Deploying...';
+        const indices = Array.from(set).sort((a,b)=>b-a);
+        if (type==='gallery') { indices.forEach(i=>galleryImages.splice(i,1)); selectedGallery.clear(); }
+        else { indices.forEach(i=>portfolioItems.splice(i,1)); selectedPortfolio.clear(); }
+        saveData();
+        try {
+          if (type==='gallery') await deployGalleryChanges(); else await deployPortfolioChanges();
+        } catch(e) { showAdminToast('Deploy error: '+e.message,'error'); }
+        renderGallery(); renderPortfolio(); updateStats(); updateCounts(); updateSelectionUI(type);
+        closeModal('deleteModal');
+        this.disabled = false; this.innerHTML = '<i class="ri-delete-bin-6-line"></i> Remove & Deploy';
+      };
+      openModal('deleteModal');
+    }
+
+    // ======================================================================
+    // ADD PORTFOLIO ITEM
+    // ======================================================================
+    let addPortfolioFileData = null;
+    function openAddPortfolioModal() {
+      addPortfolioFileData = null;
+      document.getElementById('addPortfolioSrc').value = '';
+      document.getElementById('addPortfolioTitle').value = '';
+      document.getElementById('addPortfolioSubtitle').value = '';
+      document.getElementById('addPortfolioPreview').style.display = 'none';
+      openModal('addPortfolioModal');
+    }
+    function handleAddPortfolioPreview(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('addPortfolioPreview').src = e.target.result;
+          document.getElementById('addPortfolioPreview').style.display = 'block';
+          addPortfolioFileData = { name: input.files[0].name, data: e.target.result };
+          document.getElementById('addPortfolioSrc').value = 'assets/' + input.files[0].name;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    async function addPortfolioItem() {
+      const src = document.getElementById('addPortfolioSrc').value.trim();
+      if (!src) return showAdminToast('Image source is required','error');
+      const category = document.getElementById('addPortfolioCategory').value;
+      const title = document.getElementById('addPortfolioTitle').value.trim() || 'Untitled';
+      const subtitle = document.getElementById('addPortfolioSubtitle').value.trim() || category.charAt(0).toUpperCase()+category.slice(1)+' Session';
+
+      const btn = document.getElementById('addPortfolioBtn');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Deploying...';
+
+      try {
+        if (addPortfolioFileData) {
+          showAdminToast('Uploading image to GitHub...','info');
+          await uploadImageToGitHub(addPortfolioFileData.name, addPortfolioFileData.data);
+        }
+        portfolioItems.push({ src, alt: title, category, title, subtitle });
+        saveData();
+        await deployPortfolioChanges();
+        renderPortfolio(); updateStats(); updateCounts();
+        closeModal('addPortfolioModal');
+        addPortfolioFileData = null;
+      } catch(e) {
+        showAdminToast('Error: '+e.message,'error');
+      } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="ri-rocket-2-line"></i> Add & Deploy';
+      }
+    }
+
+    // ======================================================================
+    // UPLOAD AREA
+    // ======================================================================
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
+
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        if (file.size > 10*1024*1024) { showAdminToast(`${file.name} exceeds 10MB`,'warning'); return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+          uploadFiles.push({ name: file.name, size: file.size, data: e.target.result, title: file.name.replace(/\.[^/.]+$/,'').replace(/[-_]/g,' '), category: 'portraits' });
+          renderUploadPreviews();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    function renderUploadPreviews() {
+      const grid = document.getElementById('uploadPreviewGrid');
+      const actions = document.getElementById('uploadActions');
+      if (!uploadFiles.length) { grid.innerHTML = ''; actions.style.display = 'none'; return; }
+      actions.style.display = 'block';
+      grid.innerHTML = uploadFiles.map((f,i) => `
+        <div class="upload-preview-item">
+          <button class="preview-remove" onclick="removeUploadFile(${i})"><i class="ri-close-line"></i></button>
+          <img src="${f.data}" alt="${f.name}" />
+          <div class="preview-info">
+            <div class="preview-name">${f.name}</div>
+            <div class="preview-size">${formatFileSize(f.size)}</div>
+            <input type="text" value="${f.title}" placeholder="Image title" onchange="uploadFiles[${i}].title=this.value" />
+            <select onchange="uploadFiles[${i}].category=this.value">
+              <option value="portraits" ${f.category==='portraits'?'selected':''}>Portraits</option>
+              <option value="weddings" ${f.category==='weddings'?'selected':''}>Weddings</option>
+              <option value="fashion" ${f.category==='fashion'?'selected':''}>Fashion</option>
+              <option value="family" ${f.category==='family'?'selected':''}>Family</option>
+              <option value="maternity" ${f.category==='maternity'?'selected':''}>Maternity</option>
+            </select>
+          </div>
+        </div>`).join('');
+    }
+    function removeUploadFile(i) { uploadFiles.splice(i,1); renderUploadPreviews(); }
+    function clearUploadPreviews() { uploadFiles = []; renderUploadPreviews(); }
+    function formatFileSize(b) { if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
+
+    // ======================================================================
+    // MODALS & TOAST
+    // ======================================================================
+    function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = ''; }
+    document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', e => { if(e.target===bd){bd.classList.remove('active');document.body.style.overflow='';} }));
+    document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.modal-backdrop.active').forEach(m=>{m.classList.remove('active');document.body.style.overflow='';}); });
+
+    function showAdminToast(msg, type='info') {
+      const t = document.getElementById('adminToast'), txt = document.getElementById('adminToastText'), icon = t.querySelector('i');
+      txt.textContent = msg; t.className = 'admin-toast active ' + type;
+      icon.className = {success:'ri-check-double-line',error:'ri-error-warning-line',warning:'ri-alert-line',info:'ri-information-line'}[type]||'ri-information-line';
+      setTimeout(() => t.classList.remove('active'), 4000);
+    }
+
+    // ======================================================================
+    // STATS
+    // ======================================================================
+    function updateStats() {
+      document.getElementById('statTotal').textContent = galleryImages.length + portfolioItems.length;
+      document.getElementById('statGallery').textContent = galleryImages.length;
+      document.getElementById('statPortfolio').textContent = portfolioItems.length;
+    }
+    function updateCounts() {
+      document.getElementById('galleryCount').textContent = galleryImages.length;
+      document.getElementById('portfolioCount').textContent = portfolioItems.length;
+    }
+
+    // ======================================================================
+    // GITHUB CONFIG
+    // ======================================================================
+    function saveGitHubConfig() {
+      const cfg = {
+        token: document.getElementById('githubToken').value.trim(),
+        owner: document.getElementById('githubOwner').value.trim(),
+        repo: document.getElementById('githubRepo').value.trim(),
+        branch: document.getElementById('githubBranch').value.trim() || 'main'
+      };
+      if (!cfg.token||!cfg.owner||!cfg.repo) return showAdminToast('Fill in all GitHub fields','error');
+      localStorage.setItem('fiker_github_config', JSON.stringify(cfg));
+      updateGitHubStatus(true); checkGithubDashboard();
+      showAdminToast('GitHub configuration saved!','success');
+    }
+    function loadGitHubConfig() {
+      const s = localStorage.getItem('fiker_github_config');
+      if (s) {
+        const c = JSON.parse(s);
+        document.getElementById('githubToken').value = c.token||'';
+        document.getElementById('githubOwner').value = c.owner||'';
+        document.getElementById('githubRepo').value = c.repo||'';
+        document.getElementById('githubBranch').value = c.branch||'main';
+        updateGitHubStatus(true);
+      }
+    }
+    function updateGitHubStatus(connected) {
+      document.getElementById('githubStatusDot').className = 'status-dot ' + (connected?'connected':'disconnected');
+      const c = getGitHubConfig();
+      document.getElementById('githubStatusText').textContent = connected && c ? `Connected to ${c.owner}/${c.repo}` : 'GitHub not connected';
+    }
+    async function testGitHubConnection() {
+      const c = getGitHubConfig();
+      if (!c) return showAdminToast('Save your config first','error');
+      try {
+        const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}`, { headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json' } });
+        if (r.ok) { updateGitHubStatus(true); checkGithubDashboard(); showAdminToast('Connected to GitHub! ✓','success'); }
+        else { updateGitHubStatus(false); showAdminToast('Connection failed. Check credentials.','error'); }
+      } catch(e) { showAdminToast('Network error','error'); }
+    }
+
+    console.log('🔐 Fiker Photography Admin Panel — Fully Automated');
+  </script>
+</body>
+</html>
