@@ -694,6 +694,9 @@
       { src:'assets/portfolio-1.webp',alt:'Wedding',category:'weddings',title:'Elegant Couple',subtitle:'Portrait Session' },
       { src:'assets/portfolio-2.webp',alt:'Wedding',category:'weddings',title:'Eternal Love',subtitle:'Wedding Portrait' },
       { src:'assets/portfolio-3.webp',alt:'Wedding',category:'weddings',title:'Wedding Details',subtitle:'Bridal Accessories' },
+      { src:'assets/result.webp',alt:'test',category:'portraits',title:'test',subtitle:'test' },
+      { src:'assets/Gemini_Generated_Image_svq0ttsvq0ttsvq0.webp',alt:'test',category:'portraits',title:'test',subtitle:'test' },
+      { src:'assets/badge.webp',alt:'test',category:'portraits',title:'test',subtitle:'test' },
     ];
 
     // ======================================================================
@@ -715,7 +718,7 @@
       const sg = localStorage.getItem('fiker_gallery'), sp = localStorage.getItem('fiker_portfolio');
       galleryImages = sg ? JSON.parse(sg) : [...DEFAULT_GALLERY];
       portfolioItems = sp ? JSON.parse(sp) : [...DEFAULT_PORTFOLIO];
-      // Migrate old .jpg/.png/.jpeg paths to .webp
+      // Migrate old .webp/.webp/.webp paths to .webp
       let migrated = false;
       const migrateExt = (s) => s ? s.replace(/\.(jpg|jpeg|png)/gi, '.webp') : s;
       galleryImages.forEach(img => {
@@ -728,7 +731,7 @@
         if (newSrc !== item.src) { item.src = newSrc; migrated = true; }
         if (item.alt) item.alt = migrateExt(item.alt);
       });
-      if (migrated) { saveData(); console.log('Migrated image paths from .jpg/.png to .webp'); }
+      if (migrated) { saveData(); console.log('Migrated image paths from .webp/.webp to .webp'); }
     }
     function saveData() {
       localStorage.setItem('fiker_gallery', JSON.stringify(galleryImages));
