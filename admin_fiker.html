@@ -715,6 +715,20 @@
       const sg = localStorage.getItem('fiker_gallery'), sp = localStorage.getItem('fiker_portfolio');
       galleryImages = sg ? JSON.parse(sg) : [...DEFAULT_GALLERY];
       portfolioItems = sp ? JSON.parse(sp) : [...DEFAULT_PORTFOLIO];
+      // Migrate old .jpg/.png/.jpeg paths to .webp
+      let migrated = false;
+      const migrateExt = (s) => s ? s.replace(/\.(jpg|jpeg|png)/gi, '.webp') : s;
+      galleryImages.forEach(img => {
+        const newSrc = migrateExt(img.src);
+        if (newSrc !== img.src) { img.src = newSrc; migrated = true; }
+        if (img.alt) img.alt = migrateExt(img.alt);
+      });
+      portfolioItems.forEach(item => {
+        const newSrc = migrateExt(item.src);
+        if (newSrc !== item.src) { item.src = newSrc; migrated = true; }
+        if (item.alt) item.alt = migrateExt(item.alt);
+      });
+      if (migrated) { saveData(); console.log('Migrated image paths from .jpg/.png to .webp'); }
     }
     function saveData() {
       localStorage.setItem('fiker_gallery', JSON.stringify(galleryImages));
@@ -801,6 +815,7 @@
 
     async function ghGet(path) {
       const c = getGitHubConfig();
+      if (!c) throw new Error('GitHub not configured! Go to Settings tab to add your token, owner, and repo.');
       const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${c.branch||'main'}`, {
         headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json' }
       });
@@ -813,6 +828,7 @@
 
     async function ghPut(path, content, sha, message) {
       const c = getGitHubConfig();
+      if (!c) throw new Error('GitHub not configured! Go to Settings tab to add your token, owner, and repo.');
       const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: c.branch || 'main' };
       if (sha) body.sha = sha;
       const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`, {
@@ -829,6 +845,7 @@
 
     async function ghPutBinary(path, base64Content, sha, message) {
       const c = getGitHubConfig();
+      if (!c) throw new Error('GitHub not configured! Go to Settings tab to add your token, owner, and repo.');
       const body = { message, content: base64Content, branch: c.branch || 'main' };
       if (sha) body.sha = sha;
       const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`, {
